@@ -1,2 +1,1 @@
 # strona-z-grami
-# zupa
