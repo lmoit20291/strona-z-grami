@@ -1,5 +1,7 @@
 <?php
 
+header("Access-Control-Allow-Origin: *");
+
 $conn = new mysqli("localhost", "root", "", "strona_z_grami");
 
 if ($conn->connect_error) {
