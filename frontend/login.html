@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Logowanie</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>🎮 Strona z Grami</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="games.html">Gry</a>
+    <a href="login.html">Logowanie</a>
+  </nav>
+</header>
+
+<main class="container center">
+  <div class="login-box">
+    <h2 id="formTitle">Logowanie</h2>
+
+    <input id="email" type="text" placeholder="Email">
+    <input id="password" type="password" placeholder="Hasło">
+
+    <div id="registerExtra" style="display:none; width:100%;">
+      <input id="username" type="text" placeholder="Nazwa użytkownika">
+    </div>
+
+    <button onclick="submitForm()" id="mainBtn">Zaloguj</button>
+
+    <p id="msg"></p>
+
+    <p class="switch" onclick="toggleForm()">Nie masz konta? Zarejestruj się</p>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
