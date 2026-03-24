@@ -38,3 +38,9 @@ function submitForm() {
     }
   }
 }
+
+fetch('http://localhost/strona-z-grami/backend/api/games.php')
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+  });
