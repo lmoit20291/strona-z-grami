@@ -1,14 +1,10 @@
 <?php
-
 header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
+include "../db.php";
 
-$conn = new mysqli("localhost", "root", "", "strona_z_grami");
-
-if ($conn->connect_error) {
-    die("Błąd połączenia: " . $conn->connect_error);
-}
-
-$result = $conn->query("SELECT * FROM games");
+$sql = "SELECT * FROM v_games_catalog";
+$result = $conn->query($sql);
 
 $games = [];
 
@@ -17,3 +13,4 @@ while ($row = $result->fetch_assoc()) {
 }
 
 echo json_encode($games);
+?>
