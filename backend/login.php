@@ -12,7 +12,7 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
 
-    if (password_verify($password, $user['passwor_hash'])) {
+    if (password_verify($password, $user['password_hash'])) {
         $_SESSION['user'] = $user['username'];
         echo "Zalogowano!";
     } else {
