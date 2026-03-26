@@ -20,27 +20,49 @@ function submitForm() {
   if (isRegister) {
     const username = document.getElementById('username').value;
 
-    if (!email || !password || !username) {
-      msg.textContent = 'Wypełnij wszystkie pola';
-      msg.style.color = 'red';
-      return;
-    }
+    fetch('/strona-z-grami/backend/register.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `username=${username}&email=${email}&password=${password}`
+    })
+    .then(res => res.text())
+    .then(data => {
+      msg.textContent = data;
+    });
 
-    msg.textContent = 'Konto utworzone!';
-    msg.style.color = 'lightgreen';
   } else {
-    if (email === 'admin' && password === '1234') {
-      msg.textContent = 'Zalogowano!';
-      msg.style.color = 'lightgreen';
-    } else {
-      msg.textContent = 'Błędne dane';
-      msg.style.color = 'red';
-    }
+    fetch('/strona-z-grami/backend/login.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `email=${email}&password=${password}`
+    })
+    .then(res => res.text())
+    .then(data => {
+      msg.textContent = data;
+    });
   }
 }
 
-fetch('http://localhost/strona-z-grami/backend/api/games.php')
-  .then(res => res.json())
-  .then(data => {
-    console.log(data);
-  });
+  if (window.location.pathname.includes("games.html")) {
+  fetch('/strona-z-grami/backend/api/games.php')
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('games');
+
+      data.forEach(game => {
+        const div = document.createElement('div');
+        div.classList.add('card');
+
+        div.innerHTML = `
+          <h3>${game.title}</h3>
+          <button onclick="location.href='${game.game_url}'">Zagraj</button>
+        `;
+
+        container.appendChild(div);
+      });
+    });
+}
