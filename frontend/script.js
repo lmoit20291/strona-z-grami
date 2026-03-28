@@ -17,34 +17,23 @@ function submitForm() {
   const password = document.getElementById('password').value;
   const msg = document.getElementById('msg');
 
-  if (isRegister) {
-    const username = document.getElementById('username').value;
-
-    fetch('/strona-z-grami/backend/register.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `username=${username}&email=${email}&password=${password}`
-    })
-    .then(res => res.text())
-    .then(data => {
-      msg.textContent = data;
-    });
-
+  fetch('http://localhost/strona-z-grami/backend/login.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: `email=${email}&password=${password}`
+  })
+  .then(res => res.text())
+  .then(data => {
+  if (data.trim() === "OK") {
+    window.location.href = "index.html";
   } else {
-    fetch('/strona-z-grami/backend/login.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `email=${email}&password=${password}`
-    })
-    .then(res => res.text())
-    .then(data => {
-      msg.textContent = data;
-    });
+    msg.textContent = data;
+    msg.style.color = 'red';
   }
+});
+  
 }
 
   if (window.location.pathname.includes("games.html")) {
@@ -66,3 +55,68 @@ function submitForm() {
       });
     });
 }
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (window.location.pathname.includes("games.html")) {
+    fetch('http://localhost/strona-z-grami/backend/api/games.php')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('games');
+
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        data.forEach(game => {
+          const div = document.createElement('div');
+          div.classList.add('card');
+
+          div.innerHTML = `
+            <h3>${game.title}</h3>
+            <button onclick="location.href='${game.game_url}'">Zagraj</button>
+          `;
+
+          container.appendChild(div);
+        });
+      });
+  }
+
+});
+
+fetch('http://localhost/strona-z-grami/backend/check_login.php')
+  .then(res => res.text())
+  .then(data => {
+    const btn = document.getElementById('authBtn');
+    const welcome = document.getElementById('welcomeText');
+
+    if (data === "logged") {
+
+      if (btn) {
+        btn.textContent = "Wyloguj";
+
+        btn.onclick = () => {
+          fetch('http://localhost/strona-z-grami/backend/logout.php')
+            .then(() => {
+              window.location.href = "index.html";
+            });
+        };
+      }
+
+      // 🔥 pobieranie username
+      fetch('http://localhost/strona-z-grami/backend/get_user.php')
+        .then(res => res.text())
+        .then(username => {
+          if (welcome && username) {
+            welcome.textContent = `Witaj ${username}`;
+          }
+        });
+
+    } else {
+      if (btn) {
+        btn.textContent = "Logowanie";
+        btn.href = "login.html";
+      }
+    }
+  });
