@@ -17,7 +17,23 @@ function submitForm() {
   const password = document.getElementById('password').value;
   const msg = document.getElementById('msg');
 
-  fetch('http://localhost/strona-z-grami/backend/login.php', {
+  if (isRegister) {
+    const username = document.getElementById('username').value;
+
+    fetch('/strona-z-grami/backend/register.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `username=${username}&email=${email}&password=${password}`
+    })
+    .then(res => res.text())
+    .then(data => {
+      msg.textContent = data;
+    });
+
+  } else {
+fetch('http://localhost/strona-z-grami/backend/login.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -33,8 +49,9 @@ function submitForm() {
     msg.style.color = 'red';
   }
 });
-  
+  }
 }
+
 
   if (window.location.pathname.includes("games.html")) {
   fetch('/strona-z-grami/backend/api/games.php')
