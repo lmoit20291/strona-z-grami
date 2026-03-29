@@ -17,7 +17,7 @@ function submitForm() {
   const password = document.getElementById('password').value;
   const msg = document.getElementById('msg');
 
-  if (isRegister) {
+    if (isRegister) {
     const username = document.getElementById('username').value;
 
     fetch('/strona-z-grami/backend/register.php', {
@@ -33,7 +33,9 @@ function submitForm() {
     });
 
   } else {
-fetch('http://localhost/strona-z-grami/backend/login.php', {
+  
+
+  fetch('http://localhost/strona-z-grami/backend/login.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -49,30 +51,8 @@ fetch('http://localhost/strona-z-grami/backend/login.php', {
     msg.style.color = 'red';
   }
 });
-  }
 }
-
-
-  if (window.location.pathname.includes("games.html")) {
-  fetch('/strona-z-grami/backend/api/games.php')
-    .then(res => res.json())
-    .then(data => {
-      const container = document.getElementById('games');
-
-      data.forEach(game => {
-        const div = document.createElement('div');
-        div.classList.add('card');
-
-        div.innerHTML = `
-          <h3>${game.title}</h3>
-          <button onclick="location.href='${game.game_url}'">Zagraj</button>
-        `;
-
-        container.appendChild(div);
-      });
-    });
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -92,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           div.innerHTML = `
             <h3>${game.title}</h3>
-            <button onclick="location.href='${game.game_url}'">Zagraj</button>
+            <button onclick="location.href='/strona-z-grami${game.game_url}'">Zagraj</button>
           `;
 
           container.appendChild(div);
