@@ -144,26 +144,26 @@ INSERT INTO games (category_id, title, slug, short_description, description, thu
 (3, 'Typing Challenge', 'typing-challenge', 'Ćwicz szybkie pisanie na klawiaturze.', 'Gra edukacyjna pomagająca poprawić tempo i dokładność pisania.', 'https://placehold.co/600x400?text=Typing+Challenge', '/games/placeholder/index.html?game=typing-challenge', 'file', 67, 0, 1, 1, '2026-03-22 12:00:00');
 
 INSERT INTO tags (name, slug) VALUES
-('klasyczna', 'klasyczna'),
-('retro', 'retro'),
-('łamigłówka', 'lamiglowka'),
-('refleks', 'refleks'),
-('dzieci', 'dzieci'),
-('matematyka', 'matematyka'),
-('1v1', '1v1'),
-('koncentracja', 'koncentracja'),
-('klawiatura', 'klawiatura'),
-('szybka rozgrywka', 'szybka-rozgrywka');
+('RPG', 'rpg'),              -- ID 11
+('Akcja', 'akcja'),          -- ID 12
+('Przygodowe', 'przygodowe'), -- ID 13
+('Strategiczne', 'strategiczne'), -- ID 14
+('Symulatory', 'symulatory'), -- ID 15
+('Horror', 'horror'),        -- ID 16
+('Indie', 'indie'),          -- ID 17
+('FPS', 'fps'),              -- ID 18
+('Wyścigowe', 'wyscigowe'),  -- ID 19
+('Sportowe', 'sportowe');    -- ID 20
 
 INSERT INTO game_tags (game_id, tag_id) VALUES
-(1, 1), (1, 2), (1, 4), (1, 10),
-(2, 3), (2, 8), (2, 10),
-(3, 5), (3, 8), (3, 10),
-(4, 5), (4, 6),
-(5, 1), (5, 7), (5, 10),
-(6, 4), (6, 10),
-(7, 3), (7, 8),
-(8, 5), (8, 9), (8, 10);
+(1, 12), (1, 17), -- Snake: Akcja, Indie
+(2, 14), (2, 17), -- 2048: Strategiczne, Indie
+(3, 17),          -- Memory Match: Indie
+(4, 17),          -- Quiz Matematyczny: Indie
+(5, 14), (5, 17), -- Tic Tac Toe: Strategiczne, Indie
+(6, 12), (6, 17), -- Flappy Pixel: Akcja, Indie
+(7, 14),          -- Sudoku Mini: Strategiczne
+(8, 17);          -- Typing Challenge: Indie
 
 INSERT INTO favorites (user_id, game_id) VALUES
 (2, 1),
