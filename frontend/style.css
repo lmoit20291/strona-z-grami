@@ -121,3 +121,15 @@ button:hover {
 .switch:hover {
   color: white;
 }
+.game-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+  text-align: center; /* fallback */
+}
+
+iframe {
+  display: block;
+  margin: 0 auto;
+}
