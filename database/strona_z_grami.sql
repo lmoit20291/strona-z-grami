@@ -143,27 +143,35 @@ INSERT INTO games (category_id, title, slug, short_description, description, thu
 (1, 'Sudoku Mini', 'sudoku-mini', 'Małe sudoku do szybkiego rozwiązania.', 'Krótka wersja sudoku przeznaczona do rozgrywki w przeglądarce.', 'https://placehold.co/600x400?text=Sudoku+Mini', '/games/placeholder/index.html?game=sudoku-mini', 'file', 92, 0, 1, 1, '2026-03-21 12:00:00'),
 (3, 'Typing Challenge', 'typing-challenge', 'Ćwicz szybkie pisanie na klawiaturze.', 'Gra edukacyjna pomagająca poprawić tempo i dokładność pisania.', 'https://placehold.co/600x400?text=Typing+Challenge', '/games/placeholder/index.html?game=typing-challenge', 'file', 67, 0, 1, 1, '2026-03-22 12:00:00');
 
-INSERT INTO tags (name, slug) VALUES
-('RPG', 'rpg'),              -- ID 11
-('Akcja', 'akcja'),          -- ID 12
-('Przygodowe', 'przygodowe'), -- ID 13
-('Strategiczne', 'strategiczne'), -- ID 14
-('Symulatory', 'symulatory'), -- ID 15
-('Horror', 'horror'),        -- ID 16
-('Indie', 'indie'),          -- ID 17
-('FPS', 'fps'),              -- ID 18
-('Wyścigowe', 'wyscigowe'),  -- ID 19
-('Sportowe', 'sportowe');    -- ID 20
+INSERT INTO tags (id, name, slug) VALUES
+(1, 'RPG', 'rpg'),
+(2, 'Akcja', 'akcja'),
+(3, 'Przygodowe', 'przygodowe'),
+(4, 'Strategiczne', 'strategiczne'),
+(5, 'Symulatory', 'symulatory'),
+(6, 'Horror', 'horror'),
+(7, 'Indie', 'indie'),
+(8, 'FPS', 'fps'),
+(9, 'Wyścigowe', 'wyscigowe'),
+(10, 'Sportowe', 'sportowe');
 
 INSERT INTO game_tags (game_id, tag_id) VALUES
-(1, 12), (1, 17), -- Snake: Akcja, Indie
-(2, 14), (2, 17), -- 2048: Strategiczne, Indie
-(3, 17),          -- Memory Match: Indie
-(4, 17),          -- Quiz Matematyczny: Indie
-(5, 14), (5, 17), -- Tic Tac Toe: Strategiczne, Indie
-(6, 12), (6, 17), -- Flappy Pixel: Akcja, Indie
-(7, 14),          -- Sudoku Mini: Strategiczne
-(8, 17);          -- Typing Challenge: Indie
+-- Snake (ID: 1) -> Akcja (2), Indie (7)
+(1, 2), (1, 7), 
+-- 2048 (ID: 2) -> Strategiczne (4), Indie (7)
+(2, 4), (2, 7),
+-- Memory Match (ID: 3) -> Indie (7)
+(3, 7),
+-- Quiz Matematyczny (ID: 4) -> Indie (7)
+(4, 7),
+-- Tic Tac Toe (ID: 5) -> Strategiczne (4), Indie (7)
+(5, 4), (5, 7),
+-- Flappy Pixel (ID: 6) -> Akcja (2), Indie (7)
+(6, 2), (6, 7),
+-- Sudoku Mini (ID: 7) -> Strategiczne (4), Indie (7)
+(7, 4), (7, 7),
+-- Typing Challenge (ID: 8) -> Symulatory (5), Indie (7)
+(8, 5), (8, 7);
 
 INSERT INTO favorites (user_id, game_id) VALUES
 (2, 1),
