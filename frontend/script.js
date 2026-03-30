@@ -96,24 +96,24 @@ fetch('http://localhost/strona-z-grami/backend/check_login.php')
         btn.onclick = () => {
           fetch('http://localhost/strona-z-grami/backend/logout.php')
             .then(() => {
-              window.location.href = "index.html";
+              window.location.href = "/strona-z-grami/frontend/index.html";
             });
         };
       }
 
-      // 🔥 pobieranie username
+      // pobieranie username
       fetch('http://localhost/strona-z-grami/backend/get_user.php')
         .then(res => res.text())
         .then(username => {
           if (welcome && username) {
-            welcome.textContent = `Witaj ${username}`;
+            welcome.textContent = `${username}`;
           }
         });
 
     } else {
       if (btn) {
         btn.textContent = "Logowanie";
-        btn.href = "login.html";
+        btn.href = "/strona-z-grami/frontend/login.html";
       }
     }
   });
