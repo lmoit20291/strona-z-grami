@@ -71,40 +71,26 @@ Aby strona działała poprawnie:
 ## 🗄 Baza danych
 
 Projekt zawiera:
-
-    użytkowników (logowanie/rejestracja)
-
-    gry (min. 8)
-
-    kategorie
-
-    tagi
-
-    ulubione
-
-    oceny i komentarze
-
-API: backend/api/games.php
+- użytkowników (logowanie/rejestracja)
+- gry (min. 8)
+- kategorie
+- tagi
+- ulubione
+- oceny i komentarze
+- API: backend/api/games.php
 
 Parametry:
-
-    ?q=snake – wyszukiwanie
-
-    ?category=logiczne – filtrowanie po kategorii
-
-    ?sort=newest|popular|rating|title – sortowanie
+- ?q=snake – wyszukiwanie
+- ?category=logiczne – filtrowanie po kategorii
+- ?sort=newest|popular|rating|title – sortowanie
 
 ---
 
 ## 👥 Autorzy
-
-    Maksym Ratajczak
-
-    Igor Ratajczak
-
-    Kacper Strzyżewski
-
-    Dawid Zachaś
+- Maksym Ratajczak
+- Igor Ratajczak
+- Kacper Strzyżewski
+- Dawid Zachaś
 
 ---
 
@@ -113,22 +99,15 @@ Parametry:
 🟡 Projekt w trakcie rozwoju
 
 Aktualnie działa:
-
-    system użytkowników
-
-    API gier
-
-    frontend z dynamicznym ładowaniem
-
-    integracja z hostingiem (7m.pl)
+- system użytkowników
+- API gier
+- frontend z dynamicznym ładowaniem
+- integracja z hostingiem (7m.pl)
 
 Planowane:
-
-    panel admina
-
-    dodawanie gier przez UI
-
-    ulepszony design
+- panel admina
+- dodawanie gier przez UI
+- ulepszony design
 
 ---
 
