@@ -1,52 +1,39 @@
-#  Strona z grami
+# Strona z grami
 
-Projekt szkolny polegający na stworzeniu platformy z grami przeglądarkowymi, podobnej do itch.io.
+Projekt szkolny – robimy platformę z grami przeglądarkowymi w stylu itch.io.
 
-##  Funkcje (aktualnie)
-- wyświetlanie listy gier
-- możliwość uruchomienia gry w przeglądarce
-- podstawowa struktura frontend + backend
+## Co już działa
+* **System gier**: Wyświetlamy listę gier prosto z bazy danych przez API (fetch + JSON). Gry można normalnie odpalać w przeglądarce (np. te eksportowane z Godota).
+* **Użytkownicy**: Mamy gotową rejestrację, logowanie i obsługę sesji. Interfejs reaguje na to, czy ktoś jest zalogowany (przycisk zmienia się na "Wyloguj").
+* **Baza danych**: Mamy pełną strukturę – od tabel użytkowników i gier (na start wrzucone min. 8 sztuk), po kategorie, tagi, oceny i komentarze.
+* **Hosting**: Projekt jest przygotowany pod deployment na 7m.pl.
 
 ## Technologie
-- HTML
-- CSS
-- JavaScript
-- PHP
-- MySQL
+* Frontend: HTML, CSS, JavaScript (Fetch API)
+* Backend: PHP (sesje i logika)
+* Baza: MySQL
 
-##  Struktura projektu
-- frontend/ – strona użytkownika
-- backend/ – logika aplikacji (API)
-- database/ – baza danych
-- games/ – gry
+## Struktura plików
+* `frontend/` – strona wizualna
+* `backend/` – cała logika i API
+* `database/` – pliki bazy danych (.sql)
+* `games/` – pliki gier
 
-##  Jak uruchomić
-1. Pobierz repozytorium
-2. Uruchom XAMPP (Apache + MySQL)
-3. Wgraj projekt do folderu htdocs
-4. Otwórz w przeglądarce:
-   http://localhost/strona-z-grami/frontend/
+## Jak to odpalić u siebie (XAMPP)
+1. Wrzuć folder projektu do `htdocs/strona-z-grami`.
+2. Odpal Apache i MySQL w XAMPPie.
+3. Wejdź w phpMyAdmin i zaimportuj plik `database/strona_z_grami.sql`.
+4. Strona powinna śmigać pod adresem: `http://localhost/strona-z-grami/frontend/
 
-##  Autorzy
-- Maksym Ratajczak
-- Igor Ratajczak
-- Kacper Strzyżewski
-- Dawid Zachaś
+## API i parametry
+Gry z backendu pobieramy przez `backend/api/games.php`. 
+Można używać parametrów:
+* `?q=nazwa` – szukanie konkretnej gry
+* `?category=nazwa` – filtrowanie po kategorii
+* `?sort=newest|popular|rating|title` – sortowanie wyników
 
-## Status
-Projekt w trakcie tworzenia# strona-z-grami
+## Status projektu
+Projekt jest w trakcie rozwoju. Mamy już gotowy system użytkowników, działające API i dynamiczny frontend połączony z bazą. W planach mamy jeszcze panel administratora, dodawanie gier przez stronę i dopracowanie wyglądu.
 
-## Aktualizacja bazy danych
-Repozytorium zostało rozszerzone o:
-- pełny schemat bazy danych w `database/strona_z_grami.sql`,
-- 8 przykładowych gier,
-- użytkowników, kategorie, tagi, ulubione i oceny,
-- prostą konfigurację połączenia w `backend/config/db.php`,
-- API do pobierania gier i kategorii.
-
-### Parametry API
-`backend/api/games.php`
-- `?q=snake` – wyszukiwanie
-- `?category=logiczne` – filtrowanie po kategorii
-- `?sort=newest|popular|rating|title` – sortowanie
-
+## Autorzy
+Maksym Ratajczak, Igor Ratajczak, Kacper Strzyżewski, Dawid Zachaś
