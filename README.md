@@ -2,7 +2,7 @@
 
 Próbujemy stworzyć platformę z grami przeglądarkowymi w stylu itch.io.
 
-## Funckje naszej strony
+## Funkcje naszej strony
 * **System gier**: Wyświetlamy listę gier prosto z bazy danych przez API (fetch + JSON). Gry można normalnie odpalać w przeglądarce (np. te eksportowane z Godota).
 * **Użytkownicy**: Mamy gotową rejestrację, logowanie i obsługę sesji. Interfejs reaguje na to, czy ktoś jest zalogowany (przycisk zmienia się na "Wyloguj").
 * **Baza danych**: Mamy pełną strukturę – od tabel użytkowników i gier, po kategorie, tagi, oceny i komentarze.
