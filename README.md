@@ -1,116 +1,39 @@
-# 🎮 Strona z grami
+# Strona z grami
 
-Projekt szkolny polegający na stworzeniu platformy z grami przeglądarkowymi, podobnej do itch.io.
+Projekt szkolny – robimy platformę z grami przeglądarkowymi w stylu itch.io.
 
----
+## Co już działa
+* **System gier**: Wyświetlamy listę gier prosto z bazy danych przez API (fetch + JSON). Gry można normalnie odpalać w przeglądarce (np. te eksportowane z Godota).
+* **Użytkownicy**: Mamy gotową rejestrację, logowanie i obsługę sesji. Interfejs reaguje na to, czy ktoś jest zalogowany (przycisk zmienia się na "Wyloguj").
+* **Baza danych**: Mamy pełną strukturę – od tabel użytkowników i gier (na start wrzucone min. 8 sztuk), po kategorie, tagi, oceny i komentarze.
+* **Hosting**: Projekt jest przygotowany pod deployment na 7m.pl.
 
-## 🚀 Funkcje (aktualnie)
+## Technologie
+* Frontend: HTML, CSS, JavaScript (Fetch API)
+* Backend: PHP (sesje i logika)
+* Baza: MySQL
 
-- wyświetlanie listy gier z bazy danych
-- uruchamianie gier w przeglądarce (np. eksport z Godot)
-- rejestracja użytkowników
-- logowanie i sesje użytkownika
-- wylogowywanie
-- dynamiczna zmiana przycisku „Logowanie” → „Wyloguj”
-- wyświetlanie gier z API (fetch + JSON)
-- integracja frontend ↔ backend ↔ baza danych
+## Struktura plików
+* `frontend/` – strona wizualna
+* `backend/` – cała logika i API
+* `database/` – pliki bazy danych (.sql)
+* `games/` – pliki gier
 
----
+## Jak to odpalić u siebie (XAMPP)
+1. Wrzuć folder projektu do `htdocs/strona-z-grami`.
+2. Odpal Apache i MySQL w XAMPPie.
+3. Wejdź w phpMyAdmin i zaimportuj plik `database/strona_z_grami.sql`.
+4. Strona powinna śmigać pod adresem: `http://localhost/strona-z-grami/frontend/
 
-## 🛠 Technologie
+## API i parametry
+Gry z backendu pobieramy przez `backend/api/games.php`. 
+Można używać parametrów:
+* `?q=nazwa` – szukanie konkretnej gry
+* `?category=nazwa` – filtrowanie po kategorii
+* `?sort=newest|popular|rating|title` – sortowanie wyników
 
-- HTML
-- CSS
-- JavaScript (fetch API)
-- PHP (backend + sesje)
-- MySQL (baza danych)
+## Status projektu
+Projekt jest w trakcie rozwoju. Mamy już gotowy system użytkowników, działające API i dynamiczny frontend połączony z bazą. W planach mamy jeszcze panel administratora, dodawanie gier przez stronę i dopracowanie wyglądu.
 
----
-
-## 📂 Struktura projektu
-
-### Lokalnie (XAMPP)
-/strona-z-grami/
-├── frontend/
-├── backend/
-├── database/
-├── games/
-
-### Produkcja (7m.pl)
-/public_html/
-├── index.html
-├── games.html
-├── login.html
-├── style.css
-├── script.js
-├── /games/
-├── /backend/
-
----
-
-## ▶️ Jak uruchomić (lokalnie)
-
-1. Pobierz repozytorium  
-2. Uruchom XAMPP (Apache + MySQL)  
-3. Wgraj projekt do: htdocs/strona-z-grami
-4. Zaimportuj bazę:
-- phpMyAdmin → import `database/strona_z_grami.sql`
-5. Otwórz: http://localhost/strona-z-grami/frontend/
-
----
-
-## 🌐 Deployment (7m.pl)
-
-Aby strona działała poprawnie:
-- wszystkie pliki muszą być w `/public_html/`
-- ścieżki w JS muszą być absolutne, np.: ```js fetch('/backend/api/games.php')
-- gry muszą znajdować się w: /public_html/games/
-
----
-
-## 🗄 Baza danych
-
-Projekt zawiera:
-- użytkowników (logowanie/rejestracja)
-- gry (min. 8)
-- kategorie
-- tagi
-- ulubione
-- oceny i komentarze
-- API: backend/api/games.php
-
-Parametry:
-- ?q=snake – wyszukiwanie
-- ?category=logiczne – filtrowanie po kategorii
-- ?sort=newest|popular|rating|title – sortowanie
-
----
-
-## 👥 Autorzy
-- Maksym Ratajczak
-- Igor Ratajczak
-- Kacper Strzyżewski
-- Dawid Zachaś
-
----
-
-## 📌 Status
-
-🟡 Projekt w trakcie rozwoju
-
-Aktualnie działa:
-- system użytkowników
-- API gier
-- frontend z dynamicznym ładowaniem
-- integracja z hostingiem (7m.pl)
-
-Planowane:
-- panel admina
-- dodawanie gier przez UI
-- ulepszony design
-
----
-
-
-
-
+## Autorzy
+Maksym Ratajczak, Igor Ratajczak, Kacper Strzyżewski, Dawid Zachaś
