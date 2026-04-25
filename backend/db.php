@@ -1,8 +1,8 @@
 <?php
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "strona_z_grami";
+$host = "sql2.7m.pl";
+$user = "stronagrami_strona-z-grami";
+$password = "Haslo123";
+$db = "stronagrami_strona-z-grami";
 
 $conn = new mysqli($host, $user, $password, $db);
 
