@@ -35,7 +35,7 @@ function submitForm() {
   } else {
   
 
-  fetch('http://localhost/strona-z-grami/backend/login.php', {
+  fetch('/strona-z-grami/backend/login.php', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -57,7 +57,7 @@ function submitForm() {
 document.addEventListener("DOMContentLoaded", () => {
 
   if (window.location.pathname.includes("games.html")) {
-    fetch('http://localhost/strona-z-grami/backend/api/games.php')
+    fetch('/strona-z-grami/backend/api/games.php')
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById('games');
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-fetch('http://localhost/strona-z-grami/backend/check_login.php')
+fetch('/strona-z-grami/backend/check_login.php')
   .then(res => res.text())
   .then(data => {
     const btn = document.getElementById('authBtn');
@@ -94,7 +94,7 @@ fetch('http://localhost/strona-z-grami/backend/check_login.php')
         btn.textContent = "Wyloguj";
 
         btn.onclick = () => {
-          fetch('http://localhost/strona-z-grami/backend/logout.php')
+          fetch('/strona-z-grami/backend/logout.php')
             .then(() => {
               window.location.href = "/strona-z-grami/frontend/index.html";
             });
@@ -102,7 +102,7 @@ fetch('http://localhost/strona-z-grami/backend/check_login.php')
       }
 
       // pobieranie username
-      fetch('http://localhost/strona-z-grami/backend/get_user.php')
+      fetch('/strona-z-grami/backend/get_user.php')
         .then(res => res.text())
         .then(username => {
           if (welcome && username) {
