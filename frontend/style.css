@@ -1,10 +1,17 @@
 body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #050505;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   color: white;
-}
+  min-height: 100vh;
 
+  /* tło: logo PlayHub z przyciemnieniem */
+  background-color: #050505;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.82), rgba(0,0,0,0.82)),
+    url('tlo.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
 header {
   display: flex;
   justify-content: space-between;

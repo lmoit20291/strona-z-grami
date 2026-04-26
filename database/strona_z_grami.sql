@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 26, 2026 at 09:09 PM
+-- Generation Time: Apr 26, 2026 at 10:19 PM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `testowy`
+-- Database: `strona_z_grami`
 --
 
 -- --------------------------------------------------------
@@ -96,14 +96,14 @@ CREATE TABLE `games` (
 --
 
 INSERT INTO `games` (`id`, `category_id`, `title`, `slug`, `short_description`, `description`, `thumbnail`, `game_url`, `source_type`, `play_count`, `is_featured`, `is_active`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, 2, 'Snake', 'snake', 'Klasyczna gra Snake w wersji przeglądarkowej.', 'Steruj wężem, zbieraj punkty i unikaj kolizji ze ścianą oraz własnym ogonem.', '/games/snake/solid_snake.jpg', '/games/snake/index.html', 'file', 256, 1, 1, 1, '2026-03-15 11:00:00', '2026-04-26 19:06:54'),
-(2, 1, 'Tic Tac Toe', 'tic-tac-toe', 'Kółko i krzyżyk w prostym wydaniu online.', 'Rozegraj szybką partię i spróbuj pokonać przeciwnika.', 'https://placehold.co/600x400?text=Tic+Tac+Toe', '/games/tic-tac-toe/index.html', 'file', 153, 0, 1, 1, '2026-03-19 11:00:00', '2026-04-26 19:06:54'),
-(3, 1, 'Memory Match', 'memory-match', 'Znajdź pary kart w jak najmniejszej liczbie ruchów.', 'Gra pamięciowa, idealna do szybkiej rozgrywki i ćwiczenia koncentracji.', 'https://placehold.co/600x400?text=Memory+Match', '/games/memory-match/index.html', 'file', 118, 0, 1, 1, '2026-03-17 11:00:00', '2026-04-26 19:06:54'),
-(4, 2, 'Pirate Jump', 'pirate-jump', 'Skacz przez przeszkody jako dzielny pirat.', 'Zręcznościowa gra platformowa, w której wcielasz się w pirata skaczącego przez kolejne przeszkody.', 'https://placehold.co/600x400?text=Pirate+Jump', '/games/pirate-jump/index.html', 'file', 0, 0, 1, 1, '2026-04-25 10:00:00', '2026-04-26 19:06:54'),
-(5, 1, '2048', '2048', 'Połącz kafelki i zdobądź liczbę 2048.', 'Logiczna gra polegająca na łączeniu identycznych wartości w większe liczby.', NULL, '/games/2048/index.html', 'file', 334, 1, 1, 1, '2026-03-16 11:00:00', '2026-04-26 19:06:54'),
-(6, 2, 'Flappy Pixel', 'flappy-pixel', 'Omijaj przeszkody i utrzymaj się jak najdłużej.', 'Zręcznościowa gra w stylu endless runner z prostym sterowaniem.', 'https://placehold.co/600x400?text=Flappy+Pixel', '/games/placeholder/index.html?game=flappy-pixel', 'file', 198, 0, 1, 1, '2026-03-20 11:00:00', '2026-04-26 19:06:54'),
-(7, 1, 'Sudoku Mini', 'sudoku-mini', 'Małe sudoku do szybkiego rozwiązania.', 'Krótka wersja sudoku przeznaczona do rozgrywki w przeglądarce.', 'https://placehold.co/600x400?text=Sudoku+Mini', '/games/placeholder/index.html?game=sudoku-mini', 'file', 92, 0, 1, 1, '2026-03-21 11:00:00', '2026-04-26 19:06:54'),
-(8, 3, 'Typing Challenge', 'typing-challenge', 'Ćwicz szybkie pisanie na klawiaturze.', 'Gra edukacyjna pomagająca poprawić tempo i dokładność pisania.', 'https://placehold.co/600x400?text=Typing+Challenge', '/games/placeholder/index.html?game=typing-challenge', 'file', 67, 0, 1, 1, '2026-03-22 11:00:00', '2026-04-26 19:06:54');
+(1, 2, 'Snake', 'snake', 'Klasyczna gra Snake w wersji przeglądarkowej.', 'Steruj wężem, zbieraj punkty i unikaj kolizji ze ścianą oraz własnym ogonem.', '/strona-z-grami/games/snake/solid_snake.jpg', '/games/snake/index.html', 'file', 256, 1, 1, 1, '2026-03-15 11:00:00', '2026-04-26 19:55:30'),
+(2, 1, 'Tic Tac Toe', 'tic-tac-toe', 'Kółko i krzyżyk w prostym wydaniu online.', 'Rozegraj szybką partię i spróbuj pokonać przeciwnika.', '/strona-z-grami/games/tictactoe/TicTacToe.jpg', '/games/tictactoe/index.html', 'file', 153, 0, 1, 1, '2026-03-19 11:00:00', '2026-04-26 20:17:49'),
+(3, 1, 'Memory Match', 'memory-match', 'Znajdź pary kart w jak najmniejszej liczbie ruchów.', 'Gra pamięciowa, idealna do szybkiej rozgrywki i ćwiczenia koncentracji.', '/strona-z-grami/games/memorymatch/MemoryMatch.jpg', '/games/memorymatch/index.html', 'file', 118, 0, 1, 1, '2026-03-17 11:00:00', '2026-04-26 20:17:41'),
+(4, 2, 'Pirate Jump', 'pirate-jump', 'Skacz przez przeszkody jako dzielny pirat.', 'Zręcznościowa gra platformowa, w której wcielasz się w pirata skaczącego przez kolejne przeszkody.', '/strona-z-grami/games/piratejump/Pirate_Jump.jpg', '/games/pirate-jump/index.html', 'file', 0, 0, 1, 1, '2026-04-25 10:00:00', '2026-04-26 19:58:21'),
+(5, 1, '2048', '2048', 'Połącz kafelki i zdobądź liczbę 2048.', 'Logiczna gra polegająca na łączeniu identycznych wartości w większe liczby.', '/strona-z-grami/games/2048/2048.jpg', '/games/2048/index.html', 'file', 334, 1, 1, 1, '2026-03-16 11:00:00', '2026-04-26 19:58:33'),
+(6, 2, 'Flappy Pixel', 'flappy-pixel', 'Omijaj przeszkody i utrzymaj się jak najdłużej.', 'Zręcznościowa gra w stylu endless runner z prostym sterowaniem.', '/strona-z-grami/games/flappy/flappy.jpg', '/games/flappy/index.html', 'file', 198, 0, 1, 1, '2026-03-20 11:00:00', '2026-04-26 20:00:33'),
+(7, 1, 'Sudoku Mini', 'sudoku-mini', 'Małe sudoku do szybkiego rozwiązania.', 'Krótka wersja sudoku przeznaczona do rozgrywki w przeglądarce.', '/strona-z-grami/games/sudoku/sudoku.jpg', '/games/sudoku/index.html', 'file', 92, 0, 1, 1, '2026-03-21 11:00:00', '2026-04-26 20:00:51'),
+(8, 3, 'Typing Challenge', 'typing-challenge', 'Ćwicz szybkie pisanie na klawiaturze.', 'Gra edukacyjna pomagająca poprawić tempo i dokładność pisania.', '/strona-z-grami/games/typing/typing.jpg', '/games/typing/index.html', 'file', 67, 0, 1, 1, '2026-03-22 11:00:00', '2026-04-26 20:01:00');
 
 -- --------------------------------------------------------
 

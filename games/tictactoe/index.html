@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kółko i Krzyżyk — PlayHub Games</title>
+    <link rel="stylesheet" href="../shared/game-shell.css">
+</head>
+<body>
+<div class="game-shell">
+    <header class="game-header">
+        <div>
+            <h1>Kółko i Krzyżyk</h1>
+            <p>Klasyczna plansza 3×3 — zagraj przeciwko AI</p>
+        </div>
+        <div class="row">
+            <button id="newRoundBtn" type="button">Nowa runda</button>
+        </div>
+    </header>
+
+    <div class="game-layout">
+        <section class="panel player-panel">
+            <div id="tttGrid" class="tic-grid"></div>
+        </section>
+        <aside class="side-panel">
+            <div class="stat-box">
+                <strong id="tttStatus">Twój ruch</strong>
+                <span>Status</span>
+            </div>
+            <div class="stat-box">
+                <strong id="scoreX">0</strong>
+                <span>Twoje wygrane (X)</span>
+            </div>
+            <div class="stat-box">
+                <strong id="scoreO">0</strong>
+                <span>Wygrane AI (O)</span>
+            </div>
+            <div class="stat-box">
+                <strong id="scoreDraw">0</strong>
+                <span>Remisy</span>
+            </div>
+            <div class="stat-box">
+                <p class="muted">Grasz jako <strong>X</strong>.<br>AI gra jako <strong>O</strong>.<br>Ustaw 3 symbole w linii.</p>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+const gridEl      = document.getElementById('tttGrid');
+const statusEl    = document.getElementById('tttStatus');
+const newRoundBtn = document.getElementById('newRoundBtn');
+const scoreXEl    = document.getElementById('scoreX');
+const scoreOEl    = document.getElementById('scoreO');
+const scoreDrawEl = document.getElementById('scoreDraw');
+
+let board, current, ended, winLine;
+let scores = { X: 0, O: 0, D: 0 };
+
+const WIN_LINES = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+];
+
+function checkWinner(b, s) {
+    return WIN_LINES.find(line => line.every(i => b[i] === s)) || null;
+}
+
+function draw() {
+    gridEl.innerHTML = board.map((cell, i) => {
+        const cls = [
+            'ttt-cell',
+            cell === 'X' ? 'x-cell' : cell === 'O' ? 'o-cell' : '',
+            winLine && winLine.includes(i) ? 'winning' : ''
+        ].join(' ');
+        return `<button class="${cls}" data-index="${i}" type="button">${cell}</button>`;
+    }).join('');
+    gridEl.querySelectorAll('.ttt-cell').forEach(btn => btn.addEventListener('click', onMove));
+}
+
+function updateScores() {
+    scoreXEl.textContent    = scores.X;
+    scoreOEl.textContent    = scores.O;
+    scoreDrawEl.textContent = scores.D;
+}
+
+function resetGame() {
+    board   = Array(9).fill('');
+    current = 'X';
+    ended   = false;
+    winLine = null;
+    statusEl.textContent = 'Twój ruch (X)';
+    draw();
+}
+
+function botMove() {
+    if (ended) return;
+    const free = board.map((v, i) => v === '' ? i : -1).filter(v => v >= 0);
+    if (!free.length) return;
+
+    const tryWin = sym => {
+        for (const idx of free) {
+            board[idx] = sym;
+            if (checkWinner(board, sym)) { board[idx] = ''; return idx; }
+            board[idx] = '';
+        }
+        return null;
+    };
+
+    let choice = tryWin('O');
+    if (choice === null) choice = tryWin('X');
+    if (choice === null && free.includes(4)) choice = 4;
+    if (choice === null) choice = free[Math.floor(Math.random() * free.length)];
+
+    board[choice] = 'O';
+
+    const line = checkWinner(board, 'O');
+    if (line) {
+        ended = true; winLine = line;
+        scores.O++; updateScores();
+        draw(); statusEl.textContent = 'AI wygrało tę rundę 🤖';
+        return;
+    }
+    if (!board.includes('')) {
+        ended = true;
+        scores.D++; updateScores();
+        draw(); statusEl.textContent = 'Remis 🤝';
+        return;
+    }
+    current = 'X'; draw();
+    statusEl.textContent = 'Twój ruch (X)';
+}
+
+function onMove(e) {
+    const i = Number(e.currentTarget.dataset.index);
+    if (ended || board[i] !== '' || current !== 'X') return;
+    board[i] = 'X';
+
+    const line = checkWinner(board, 'X');
+    if (line) {
+        ended = true; winLine = line;
+        scores.X++; updateScores();
+        draw(); statusEl.textContent = 'Brawo, wygrałeś! 🎉';
+        return;
+    }
+    if (!board.includes('')) {
+        ended = true;
+        scores.D++; updateScores();
+        draw(); statusEl.textContent = 'Remis 🤝';
+        return;
+    }
+    current = 'O'; draw();
+    statusEl.textContent = 'AI myśli…';
+    setTimeout(botMove, 450);
+}
+
+newRoundBtn.addEventListener('click', resetGame);
+resetGame();
+</script>
+</body>
+</html>
