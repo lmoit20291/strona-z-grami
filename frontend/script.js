@@ -70,12 +70,18 @@ document.addEventListener("DOMContentLoaded", () => {
           const div = document.createElement('div');
           div.classList.add('card');
 
+          const img = game.thumbnail ? game.thumbnail : 'default.jpg';
+
           div.innerHTML = `
-            <h3>${game.title}</h3>
-            <button onclick="location.href='/strona-z-grami${game.game_url}'">Zagraj</button>
+            <div class="card-bg" style="background-image: url('${img}')"></div>
+            <div class="card-content">
+              <h3>${game.title}</h3>
+              <button onclick="location.href='/strona-z-grami${game.game_url}'">Zagraj</button>
+            </div>
           `;
 
           container.appendChild(div);
+          
         });
       });
   }
