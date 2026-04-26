@@ -148,7 +148,7 @@ iframe {
   height: 150px;
 }
 
-/* 🔥 tło */
+/* tło */
 .card-bg {
   position: absolute;
   width: 100%;
@@ -159,13 +159,13 @@ iframe {
   transition: 0.3s;
 }
 
-/* 🔥 hover efekt */
+/* hover efekt */
 .card:hover .card-bg {
   transform: scale(1.1);
   filter: brightness(0.8);
 }
 
-/* 🔥 content */
+/* content */
 .card-content {
   position: relative;
   z-index: 2;
