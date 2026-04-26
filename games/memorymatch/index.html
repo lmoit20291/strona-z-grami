@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Match — PlayHub Games</title>
+    <link rel="stylesheet" href="../shared/game-shell.css">
+</head>
+<body>
+<div class="game-shell">
+    <header class="game-header">
+        <div>
+            <h1>Memory Match</h1>
+            <p>Znajdź wszystkie pary w jak najmniejszej liczbie ruchów</p>
+        </div>
+        <div class="row">
+            <button id="memoryRestart" type="button">Nowa gra</button>
+        </div>
+    </header>
+
+    <div class="game-layout">
+        <section class="panel player-panel">
+            <div id="memoryGrid" class="memory-grid"></div>
+        </section>
+        <aside class="side-panel">
+            <div class="stat-box">
+                <strong id="memoryMoves">0</strong>
+                <span>Ruchy</span>
+            </div>
+            <div class="stat-box">
+                <strong id="memoryPairs">0 / 8</strong>
+                <span>Znalezione pary</span>
+            </div>
+            <div class="stat-box">
+                <strong id="bestScore">—</strong>
+                <span>Najlepszy wynik</span>
+            </div>
+            <div class="stat-box">
+                <p class="muted">Klikaj karty, zapamiętuj ich położenie i odkrywaj identyczne symbole.</p>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+const gridEl      = document.getElementById('memoryGrid');
+const movesEl     = document.getElementById('memoryMoves');
+const pairsEl     = document.getElementById('memoryPairs');
+const bestEl      = document.getElementById('bestScore');
+const restartBtn  = document.getElementById('memoryRestart');
+
+const ICONS = ['🎮','🚀','⭐','🧠','⚡','🎯','🎵','🧩'];
+const TOTAL = ICONS.length;
+let cards, flipped, lockBoard, moves, matchedPairs, bestScore;
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function setup() {
+    cards = shuffle([...ICONS, ...ICONS]).map((icon, id) => ({ id, icon, flipped: false, matched: false }));
+    flipped = [];
+    lockBoard = false;
+    moves = 0;
+    matchedPairs = 0;
+    if (!bestScore) bestScore = null;
+    updateStats();
+    render();
+}
+
+function updateStats() {
+    movesEl.textContent = moves;
+    pairsEl.textContent = `${matchedPairs} / ${TOTAL}`;
+    bestEl.textContent  = bestScore !== null ? bestScore + ' ruchów' : '—';
+}
+
+function render() {
+    gridEl.innerHTML = cards.map(card => {
+        const cls = ['memory-card', card.flipped ? 'flipped' : '', card.matched ? 'matched' : ''].join(' ');
+        return `<button class="${cls}" data-id="${card.id}" type="button" ${card.matched ? 'disabled' : ''}>${card.flipped || card.matched ? card.icon : '❔'}</button>`;
+    }).join('');
+    gridEl.querySelectorAll('.memory-card:not([disabled])').forEach(btn => btn.addEventListener('click', flipCard));
+}
+
+function flipCard(e) {
+    const id   = Number(e.currentTarget.dataset.id);
+    const card = cards.find(c => c.id === id);
+    if (!card || card.flipped || card.matched || lockBoard) return;
+
+    card.flipped = true;
+    flipped.push(card);
+    render();
+
+    if (flipped.length === 2) {
+        moves++;
+        updateStats();
+        const [a, b] = flipped;
+        if (a.icon === b.icon) {
+            a.matched = b.matched = true;
+            matchedPairs++;
+            flipped = [];
+            updateStats();
+            render();
+            if (matchedPairs === TOTAL) {
+                if (bestScore === null || moves < bestScore) bestScore = moves;
+                updateStats();
+                setTimeout(() => alert(`🎉 Ukończyłeś Memory Match w ${moves} ruchach!${bestScore === moves ? '\n🏆 Nowy rekord!' : ''}`), 150);
+            }
+        } else {
+            lockBoard = true;
+            setTimeout(() => {
+                a.flipped = b.flipped = false;
+                flipped = [];
+                lockBoard = false;
+                render();
+            }, 750);
+        }
+    }
+}
+
+restartBtn.addEventListener('click', setup);
+setup();
+</script>
+</body>
+</html>
