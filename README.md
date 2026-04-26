@@ -24,3 +24,9 @@ Projekt jest w trakcie rozwoju. Mamy już gotowy system użytkowników, działaj
 
 ## Autorzy
 Maksym Ratajczak, Igor Ratajczak, Kacper Strzyżewski, Dawid Zachaś
+
+## Jak uruchomić lokalnie
+Aby strona działała poprawnie na lokalnym serwerze (np. XAMPP, WAMP), należy najpierw przygotować bazę danych:
+*Import bazy danych: - Wejdź do folderu /database.
+*Zaimportuj znajdujący się tam plik .sql do swojego lokalnego serwera MySQL (np. przez phpMyAdmin). (Uwaga!!!: Ten krok jest niezbędny – bez zaimportowania struktury i danych, system gier oraz logowanie nie będą działać)
+*Konfiguracja połączenia: Sprawdź pliki w folderze /backend i upewnij się, że dane dostępowe do bazy (host, login, hasło) zgadzają się z Twoją lokalną konfiguracją.
