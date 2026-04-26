@@ -1,101 +1,172 @@
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Apr 26, 2026 at 09:09 PM
+-- Wersja serwera: 10.4.32-MariaDB
+-- Wersja PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
 
-CREATE TABLE users (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(120) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `testowy`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(80) NOT NULL,
+  `slug` varchar(100) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE categories (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(80) NOT NULL UNIQUE,
-    slug VARCHAR(100) NOT NULL UNIQUE,
-    description VARCHAR(255) NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `created_at`) VALUES
+(1, 'Logiczne', 'logiczne', 'Gry rozwijające myślenie i planowanie.', '2026-04-26 19:06:54'),
+(2, 'Zręcznościowe', 'zrecznosciowe', 'Dynamiczne gry wymagające refleksu.', '2026-04-26 19:06:54'),
+(3, 'Edukacyjne', 'edukacyjne', 'Gry uczące poprzez zabawę.', '2026-04-26 19:06:54'),
+(4, 'Arcade', 'arcade', 'Klasyczne gry przeglądarkowe w szybkim stylu.', '2026-04-26 19:06:54'),
+(5, 'Strategiczne', 'strategiczne', 'Gry o planowaniu i podejmowaniu decyzji.', '2026-04-26 19:06:54');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `favorites`
+--
+
+CREATE TABLE `favorites` (
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `game_id` int(10) UNSIGNED NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE games (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    category_id INT UNSIGNED NOT NULL,
-    title VARCHAR(150) NOT NULL,
-    slug VARCHAR(170) NOT NULL UNIQUE,
-    short_description VARCHAR(255) NOT NULL,
-    description TEXT NULL,
-    thumbnail VARCHAR(255) NULL,
-    game_url VARCHAR(255) NOT NULL,
-    source_type ENUM('file', 'link') NOT NULL DEFAULT 'file',
-    play_count INT UNSIGNED NOT NULL DEFAULT 0,
-    is_featured TINYINT(1) NOT NULL DEFAULT 0,
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
-    created_by INT UNSIGNED NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_games_category FOREIGN KEY (category_id) REFERENCES categories(id)
-        ON UPDATE CASCADE ON DELETE RESTRICT,
-    CONSTRAINT fk_games_created_by FOREIGN KEY (created_by) REFERENCES users(id)
-        ON UPDATE CASCADE ON DELETE SET NULL,
-    INDEX idx_games_title (title),
-    INDEX idx_games_category (category_id),
-    INDEX idx_games_created_at (created_at),
-    INDEX idx_games_popular (play_count)
+--
+-- Dumping data for table `favorites`
+--
+
+INSERT INTO `favorites` (`user_id`, `game_id`, `created_at`) VALUES
+(2, 1, '2026-04-26 19:06:54'),
+(2, 2, '2026-04-26 19:06:54'),
+(2, 5, '2026-04-26 19:06:54');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `games`
+--
+
+CREATE TABLE `games` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `category_id` int(10) UNSIGNED NOT NULL,
+  `title` varchar(150) NOT NULL,
+  `slug` varchar(170) NOT NULL,
+  `short_description` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `thumbnail` varchar(255) DEFAULT NULL,
+  `game_url` varchar(255) NOT NULL,
+  `source_type` enum('file','link') NOT NULL DEFAULT 'file',
+  `play_count` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `is_featured` tinyint(1) NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_by` int(10) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE tags (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(60) NOT NULL UNIQUE,
-    slug VARCHAR(70) NOT NULL UNIQUE
+--
+-- Dumping data for table `games`
+--
+
+INSERT INTO `games` (`id`, `category_id`, `title`, `slug`, `short_description`, `description`, `thumbnail`, `game_url`, `source_type`, `play_count`, `is_featured`, `is_active`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 2, 'Snake', 'snake', 'Klasyczna gra Snake w wersji przeglądarkowej.', 'Steruj wężem, zbieraj punkty i unikaj kolizji ze ścianą oraz własnym ogonem.', '/games/snake/solid_snake.jpg', '/games/snake/index.html', 'file', 256, 1, 1, 1, '2026-03-15 11:00:00', '2026-04-26 19:06:54'),
+(2, 1, 'Tic Tac Toe', 'tic-tac-toe', 'Kółko i krzyżyk w prostym wydaniu online.', 'Rozegraj szybką partię i spróbuj pokonać przeciwnika.', 'https://placehold.co/600x400?text=Tic+Tac+Toe', '/games/tic-tac-toe/index.html', 'file', 153, 0, 1, 1, '2026-03-19 11:00:00', '2026-04-26 19:06:54'),
+(3, 1, 'Memory Match', 'memory-match', 'Znajdź pary kart w jak najmniejszej liczbie ruchów.', 'Gra pamięciowa, idealna do szybkiej rozgrywki i ćwiczenia koncentracji.', 'https://placehold.co/600x400?text=Memory+Match', '/games/memory-match/index.html', 'file', 118, 0, 1, 1, '2026-03-17 11:00:00', '2026-04-26 19:06:54'),
+(4, 2, 'Pirate Jump', 'pirate-jump', 'Skacz przez przeszkody jako dzielny pirat.', 'Zręcznościowa gra platformowa, w której wcielasz się w pirata skaczącego przez kolejne przeszkody.', 'https://placehold.co/600x400?text=Pirate+Jump', '/games/pirate-jump/index.html', 'file', 0, 0, 1, 1, '2026-04-25 10:00:00', '2026-04-26 19:06:54'),
+(5, 1, '2048', '2048', 'Połącz kafelki i zdobądź liczbę 2048.', 'Logiczna gra polegająca na łączeniu identycznych wartości w większe liczby.', NULL, '/games/2048/index.html', 'file', 334, 1, 1, 1, '2026-03-16 11:00:00', '2026-04-26 19:06:54'),
+(6, 2, 'Flappy Pixel', 'flappy-pixel', 'Omijaj przeszkody i utrzymaj się jak najdłużej.', 'Zręcznościowa gra w stylu endless runner z prostym sterowaniem.', 'https://placehold.co/600x400?text=Flappy+Pixel', '/games/placeholder/index.html?game=flappy-pixel', 'file', 198, 0, 1, 1, '2026-03-20 11:00:00', '2026-04-26 19:06:54'),
+(7, 1, 'Sudoku Mini', 'sudoku-mini', 'Małe sudoku do szybkiego rozwiązania.', 'Krótka wersja sudoku przeznaczona do rozgrywki w przeglądarce.', 'https://placehold.co/600x400?text=Sudoku+Mini', '/games/placeholder/index.html?game=sudoku-mini', 'file', 92, 0, 1, 1, '2026-03-21 11:00:00', '2026-04-26 19:06:54'),
+(8, 3, 'Typing Challenge', 'typing-challenge', 'Ćwicz szybkie pisanie na klawiaturze.', 'Gra edukacyjna pomagająca poprawić tempo i dokładność pisania.', 'https://placehold.co/600x400?text=Typing+Challenge', '/games/placeholder/index.html?game=typing-challenge', 'file', 67, 0, 1, 1, '2026-03-22 11:00:00', '2026-04-26 19:06:54');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `game_tags`
+--
+
+CREATE TABLE `game_tags` (
+  `game_id` int(10) UNSIGNED NOT NULL,
+  `tag_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE game_tags (
-    game_id INT UNSIGNED NOT NULL,
-    tag_id INT UNSIGNED NOT NULL,
-    PRIMARY KEY (game_id, tag_id),
-    CONSTRAINT fk_game_tags_game FOREIGN KEY (game_id) REFERENCES games(id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT fk_game_tags_tag FOREIGN KEY (tag_id) REFERENCES tags(id)
-        ON UPDATE CASCADE ON DELETE CASCADE
+--
+-- Dumping data for table `game_tags`
+--
+
+INSERT INTO `game_tags` (`game_id`, `tag_id`) VALUES
+(1, 2),
+(1, 7),
+(2, 4),
+(2, 7),
+(3, 7),
+(4, 2),
+(4, 7),
+(5, 4),
+(5, 7),
+(6, 2),
+(6, 7),
+(7, 4),
+(7, 7),
+(8, 5),
+(8, 7);
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `reviews`
+--
+
+CREATE TABLE `reviews` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `game_id` int(10) UNSIGNED NOT NULL,
+  `rating` tinyint(3) UNSIGNED DEFAULT NULL,
+  `comment` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE favorites (
-    user_id INT UNSIGNED NOT NULL,
-    game_id INT UNSIGNED NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, game_id),
-    CONSTRAINT fk_favorites_user FOREIGN KEY (user_id) REFERENCES users(id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT fk_favorites_game FOREIGN KEY (game_id) REFERENCES games(id)
-        ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+--
+-- Dumping data for table `reviews`
+--
 
-CREATE TABLE reviews (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL,
-    game_id INT UNSIGNED NOT NULL,
-    rating TINYINT UNSIGNED NULL,
-    comment TEXT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT uq_reviews_user_game UNIQUE (user_id, game_id),
-    CONSTRAINT fk_reviews_user FOREIGN KEY (user_id) REFERENCES users(id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT fk_reviews_game FOREIGN KEY (game_id) REFERENCES games(id)
-        ON UPDATE CASCADE ON DELETE CASCADE,
-    INDEX idx_reviews_game (game_id),
-    INDEX idx_reviews_rating (rating)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `reviews` (`id`, `user_id`, `game_id`, `rating`, `comment`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, 5, 'Bardzo przyjemna klasyczna gra.', '2026-03-20 13:15:00', '2026-04-26 19:06:54'),
+(2, 2, 5, 4, 'Prosta i wciągająca.', '2026-03-20 13:20:00', '2026-04-26 19:06:54'),
+(3, 1, 6, 4, 'Dobra gra na szybką przerwę.', '2026-03-21 10:00:00', '2026-04-26 19:06:54');
 
-DELIMITER //
-CREATE TRIGGER reviews_before_insert
-BEFORE INSERT ON reviews
-FOR EACH ROW
-BEGIN
+--
+-- Wyzwalacze `reviews`
+--
+DELIMITER $$
+CREATE TRIGGER `reviews_before_insert` BEFORE INSERT ON `reviews` FOR EACH ROW BEGIN
     IF NEW.rating IS NULL AND (NEW.comment IS NULL OR CHAR_LENGTH(TRIM(NEW.comment)) = 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ocena lub komentarz są wymagane.';
     END IF;
@@ -103,12 +174,11 @@ BEGIN
     IF NEW.rating IS NOT NULL AND (NEW.rating < 1 OR NEW.rating > 5) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ocena musi być w zakresie 1-5.';
     END IF;
-END //
-
-CREATE TRIGGER reviews_before_update
-BEFORE UPDATE ON reviews
-FOR EACH ROW
-BEGIN
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `reviews_before_update` BEFORE UPDATE ON `reviews` FOR EACH ROW BEGIN
     IF NEW.rating IS NULL AND (NEW.comment IS NULL OR CHAR_LENGTH(TRIM(NEW.comment)) = 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ocena lub komentarz są wymagane.';
     END IF;
@@ -116,31 +186,27 @@ BEGIN
     IF NEW.rating IS NOT NULL AND (NEW.rating < 1 OR NEW.rating > 5) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ocena musi być w zakresie 1-5.';
     END IF;
-END //
+END
+$$
 DELIMITER ;
 
-INSERT INTO users (username, email, password_hash, role) VALUES
-('admin', 'admin@stronazgrami.local', '$2y$12$kTSKfOifTPlc/1nS.0vwoe.VM9f3Zo9KqaUwmh/.65YEgaFyXZ.3u', 'admin'),
-('gracz1', 'gracz1@stronazgrami.local', '$2y$12$4JFIKPeOO/OBGYSlItVppenAmLgosp9zPVStbzne4f5imW81Ebkx2', 'user');
+-- --------------------------------------------------------
 
-INSERT INTO categories (name, slug, description) VALUES
-('Logiczne', 'logiczne', 'Gry rozwijające myślenie i planowanie.'),
-('Zręcznościowe', 'zrecznosciowe', 'Dynamiczne gry wymagające refleksu.'),
-('Edukacyjne', 'edukacyjne', 'Gry uczące poprzez zabawę.'),
-('Arcade', 'arcade', 'Klasyczne gry przeglądarkowe w szybkim stylu.'),
-('Strategiczne', 'strategiczne', 'Gry o planowaniu i podejmowaniu decyzji.');
+--
+-- Struktura tabeli dla tabeli `tags`
+--
 
-INSERT INTO games (category_id, title, slug, short_description, description, thumbnail, game_url, source_type, play_count, is_featured, is_active, created_by, created_at) VALUES
-(2, 'Snake', 'snake', 'Klasyczna gra Snake w wersji przeglądarkowej.', 'Steruj wężem, zbieraj punkty i unikaj kolizji ze ścianą oraz własnym ogonem.', '/games/snake/solid_snake.jpg', '/games/snake/index.html', 'file', 256, 1, 1, 1, '2026-03-15 12:00:00'),
-(1, '2048', '2048', 'Połącz kafelki i zdobądź liczbę 2048.', 'Logiczna gra polegająca na łączeniu identycznych wartości w większe liczby.', NULL, '/games/2048/index.html', 'file', 334, 1, 1, 1, '2026-03-16 12:00:00'),
-(1, 'Memory Match', 'memory-match', 'Znajdź pary kart w jak najmniejszej liczbie ruchów.', 'Gra pamięciowa, idealna do szybkiej rozgrywki i ćwiczenia koncentracji.', 'https://placehold.co/600x400?text=Memory+Match', '/games/placeholder/index.html?game=memory-match', 'file', 118, 0, 1, 1, '2026-03-17 12:00:00'),
-(3, 'Quiz Matematyczny', 'quiz-matematyczny', 'Krótki quiz do ćwiczenia działań matematycznych.', 'Sprawdź swoje umiejętności rachunkowe i popraw szybkość liczenia.', 'https://placehold.co/600x400?text=Quiz+Matematyczny', '/games/placeholder/index.html?game=quiz-matematyczny', 'file', 74, 0, 1, 1, '2026-03-18 12:00:00'),
-(1, 'Tic Tac Toe', 'tic-tac-toe', 'Kółko i krzyżyk w prostym wydaniu online.', 'Rozegraj szybką partię i spróbuj pokonać przeciwnika.', 'https://placehold.co/600x400?text=Tic+Tac+Toe', '/games/placeholder/index.html?game=tic-tac-toe', 'file', 153, 0, 1, 1, '2026-03-19 12:00:00'),
-(2, 'Flappy Pixel', 'flappy-pixel', 'Omijaj przeszkody i utrzymaj się jak najdłużej.', 'Zręcznościowa gra w stylu endless runner z prostym sterowaniem.', 'https://placehold.co/600x400?text=Flappy+Pixel', '/games/placeholder/index.html?game=flappy-pixel', 'file', 198, 0, 1, 1, '2026-03-20 12:00:00'),
-(1, 'Sudoku Mini', 'sudoku-mini', 'Małe sudoku do szybkiego rozwiązania.', 'Krótka wersja sudoku przeznaczona do rozgrywki w przeglądarce.', 'https://placehold.co/600x400?text=Sudoku+Mini', '/games/placeholder/index.html?game=sudoku-mini', 'file', 92, 0, 1, 1, '2026-03-21 12:00:00'),
-(3, 'Typing Challenge', 'typing-challenge', 'Ćwicz szybkie pisanie na klawiaturze.', 'Gra edukacyjna pomagająca poprawić tempo i dokładność pisania.', 'https://placehold.co/600x400?text=Typing+Challenge', '/games/placeholder/index.html?game=typing-challenge', 'file', 67, 0, 1, 1, '2026-03-22 12:00:00');
+CREATE TABLE `tags` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(60) NOT NULL,
+  `slug` varchar(70) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO tags (id, name, slug) VALUES
+--
+-- Dumping data for table `tags`
+--
+
+INSERT INTO `tags` (`id`, `name`, `slug`) VALUES
 (1, 'RPG', 'rpg'),
 (2, 'Akcja', 'akcja'),
 (3, 'Przygodowe', 'przygodowe'),
@@ -152,52 +218,193 @@ INSERT INTO tags (id, name, slug) VALUES
 (9, 'Wyścigowe', 'wyscigowe'),
 (10, 'Sportowe', 'sportowe');
 
-INSERT INTO game_tags (game_id, tag_id) VALUES
--- Snake (ID: 1) -> Akcja (2), Indie (7)
-(1, 2), (1, 7), 
--- 2048 (ID: 2) -> Strategiczne (4), Indie (7)
-(2, 4), (2, 7),
--- Memory Match (ID: 3) -> Indie (7)
-(3, 7),
--- Quiz Matematyczny (ID: 4) -> Indie (7)
-(4, 7),
--- Tic Tac Toe (ID: 5) -> Strategiczne (4), Indie (7)
-(5, 4), (5, 7),
--- Flappy Pixel (ID: 6) -> Akcja (2), Indie (7)
-(6, 2), (6, 7),
--- Sudoku Mini (ID: 7) -> Strategiczne (4), Indie (7)
-(7, 4), (7, 7),
--- Typing Challenge (ID: 8) -> Symulatory (5), Indie (7)
-(8, 5), (8, 7);
+-- --------------------------------------------------------
 
-INSERT INTO favorites (user_id, game_id) VALUES
-(2, 1),
-(2, 2),
-(2, 5);
+--
+-- Struktura tabeli dla tabeli `users`
+--
 
-INSERT INTO reviews (user_id, game_id, rating, comment, created_at) VALUES
-(2, 1, 5, 'Bardzo przyjemna klasyczna gra.', '2026-03-20 14:15:00'),
-(2, 2, 4, 'Prosta i wciągająca.', '2026-03-20 14:20:00'),
-(1, 6, 4, 'Dobra gra na szybką przerwę.', '2026-03-21 11:00:00');
+CREATE TABLE `users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(120) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `role` enum('admin','user') NOT NULL DEFAULT 'user',
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE OR REPLACE VIEW v_games_catalog AS
-SELECT
-    g.id,
-    g.title,
-    g.slug,
-    c.name AS category,
-    g.short_description,
-    g.thumbnail,
-    g.game_url,
-    g.source_type,
-    g.play_count,
-    g.is_featured,
-    g.created_at,
-    COALESCE((SELECT ROUND(AVG(r.rating), 2) FROM reviews r WHERE r.game_id = g.id AND r.rating IS NOT NULL), 0) AS average_rating,
-    COALESCE((SELECT COUNT(*) FROM favorites f WHERE f.game_id = g.id), 0) AS favorites_count,
-    COALESCE((SELECT GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') FROM game_tags gt JOIN tags t ON t.id = gt.tag_id WHERE gt.game_id = g.id), '') AS tags
-FROM games g
-JOIN categories c ON c.id = g.category_id
-WHERE g.is_active = 1;
+--
+-- Dumping data for table `users`
+--
 
-SET FOREIGN_KEY_CHECKS = 1;
+INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `role`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'admin', 'admin@stronazgrami.local', '$2y$12$kTSKfOifTPlc/1nS.0vwoe.VM9f3Zo9KqaUwmh/.65YEgaFyXZ.3u', 'admin', 1, '2026-04-26 19:06:54', '2026-04-26 19:06:54'),
+(2, 'gracz1', 'gracz1@stronazgrami.local', '$2y$12$4JFIKPeOO/OBGYSlItVppenAmLgosp9zPVStbzne4f5imW81Ebkx2', 'user', 1, '2026-04-26 19:06:54', '2026-04-26 19:06:54');
+
+-- --------------------------------------------------------
+
+--
+-- Zastąpiona struktura widoku `v_games_catalog`
+-- (See below for the actual view)
+--
+CREATE TABLE `v_games_catalog` (
+`id` int(10) unsigned
+,`title` varchar(150)
+,`slug` varchar(170)
+,`category` varchar(80)
+,`short_description` varchar(255)
+,`thumbnail` varchar(255)
+,`game_url` varchar(255)
+,`source_type` enum('file','link')
+,`play_count` int(10) unsigned
+,`is_featured` tinyint(1)
+,`created_at` timestamp
+,`average_rating` decimal(6,2)
+,`favorites_count` bigint(21)
+,`tags` mediumtext
+);
+
+-- --------------------------------------------------------
+
+--
+-- Struktura widoku `v_games_catalog`
+--
+DROP TABLE IF EXISTS `v_games_catalog`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_games_catalog`  AS SELECT `g`.`id` AS `id`, `g`.`title` AS `title`, `g`.`slug` AS `slug`, `c`.`name` AS `category`, `g`.`short_description` AS `short_description`, `g`.`thumbnail` AS `thumbnail`, `g`.`game_url` AS `game_url`, `g`.`source_type` AS `source_type`, `g`.`play_count` AS `play_count`, `g`.`is_featured` AS `is_featured`, `g`.`created_at` AS `created_at`, coalesce((select round(avg(`r`.`rating`),2) from `reviews` `r` where `r`.`game_id` = `g`.`id` and `r`.`rating` is not null),0) AS `average_rating`, coalesce((select count(0) from `favorites` `f` where `f`.`game_id` = `g`.`id`),0) AS `favorites_count`, coalesce((select group_concat(`t`.`name` order by `t`.`name` ASC separator ', ') from (`game_tags` `gt` join `tags` `t` on(`t`.`id` = `gt`.`tag_id`)) where `gt`.`game_id` = `g`.`id`),'') AS `tags` FROM (`games` `g` join `categories` `c` on(`c`.`id` = `g`.`category_id`)) WHERE `g`.`is_active` = 1 ;
+
+--
+-- Indeksy dla zrzutów tabel
+--
+
+--
+-- Indeksy dla tabeli `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indeksy dla tabeli `favorites`
+--
+ALTER TABLE `favorites`
+  ADD PRIMARY KEY (`user_id`,`game_id`),
+  ADD KEY `fk_favorites_game` (`game_id`);
+
+--
+-- Indeksy dla tabeli `games`
+--
+ALTER TABLE `games`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`),
+  ADD KEY `fk_games_created_by` (`created_by`),
+  ADD KEY `idx_games_title` (`title`),
+  ADD KEY `idx_games_category` (`category_id`),
+  ADD KEY `idx_games_created_at` (`created_at`),
+  ADD KEY `idx_games_popular` (`play_count`);
+
+--
+-- Indeksy dla tabeli `game_tags`
+--
+ALTER TABLE `game_tags`
+  ADD PRIMARY KEY (`game_id`,`tag_id`),
+  ADD KEY `fk_game_tags_tag` (`tag_id`);
+
+--
+-- Indeksy dla tabeli `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_reviews_user_game` (`user_id`,`game_id`),
+  ADD KEY `idx_reviews_game` (`game_id`),
+  ADD KEY `idx_reviews_rating` (`rating`);
+
+--
+-- Indeksy dla tabeli `tags`
+--
+ALTER TABLE `tags`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indeksy dla tabeli `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `games`
+--
+ALTER TABLE `games`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `tags`
+--
+ALTER TABLE `tags`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `favorites`
+--
+ALTER TABLE `favorites`
+  ADD CONSTRAINT `fk_favorites_game` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_favorites_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `games`
+--
+ALTER TABLE `games`
+  ADD CONSTRAINT `fk_games_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_games_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `game_tags`
+--
+ALTER TABLE `game_tags`
+  ADD CONSTRAINT `fk_game_tags_game` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_game_tags_tag` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `reviews`
+--
+ALTER TABLE `reviews`
+  ADD CONSTRAINT `fk_reviews_game` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
