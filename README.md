@@ -25,6 +25,9 @@ Projekt jest w trakcie rozwoju. Mamy już gotowy system użytkowników, działaj
 ## Autorzy
 Maksym Ratajczak, Igor Ratajczak, Kacper Strzyżewski, Dawid Zachaś
 
+## Jak uruchomić Online
+Wystarczy wejść w link: [Strona z Grami](https://strona-z-grami.7m.pl/)
+
 ## Jak uruchomić lokalnie
 Aby strona działała poprawnie na lokalnym serwerze (np. XAMPP, WAMP), należy najpierw przygotować bazę danych:
 *Import bazy danych: - Wejdź do folderu /database.
