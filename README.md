@@ -33,3 +33,15 @@ Aby strona działała poprawnie na lokalnym serwerze (np. XAMPP, WAMP), należy 
 *Import bazy danych: - Wejdź do folderu /database.
 *Zaimportuj znajdujący się tam plik .sql do swojego lokalnego serwera MySQL (np. przez phpMyAdmin). (Uwaga!!!: Ten krok jest niezbędny – bez zaimportowania struktury i danych, system gier oraz logowanie nie będą działać)
 *Konfiguracja połączenia: Sprawdź pliki w folderze /backend i upewnij się, że dane dostępowe do bazy (host, login, hasło) zgadzają się z Twoją lokalną konfiguracją.
+
+## Uwagi od twórców
+* **Gry na Godot Engine**: Obecnie 2 gry oparte 
+na silniku Godot nie działają poprawnie w 
+przeglądarce (lokalnie wszystko działa jak 
+należy, pradopodobnie jest to wina hostingu 7m.
+pl).
+* **Funkcje bazy danych**: Nasza baza posiada 
+już zaprojektowane funkcje na przyszłość (m.in.
+jak liczniki wejść), które nie mają jeszcze 
+odwzorowania w obecnym kodzie strony, więc dane 
+te nie są jeszcze naliczane.
