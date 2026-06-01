@@ -319,3 +319,17 @@ iframe {
     display: block;
     margin-bottom: 8px;
 }
+#favoriteBtn{
+    background:#555;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.3s;
+}
+
+#favoriteBtn.active{
+    background:#e53935;
+}

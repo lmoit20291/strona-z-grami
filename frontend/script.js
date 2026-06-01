@@ -204,3 +204,72 @@ function addComment() {
     });
 
 }
+
+
+function addToFavorites(gameId) {
+
+    fetch('/strona-z-grami/backend/add_favorite.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `game_id=${gameId}`
+    })
+    .then(res => res.text())
+    .then(data => {
+        alert(data);
+    });
+
+}
+const btn = document.getElementById("favoriteBtn");
+
+if (btn) {
+
+    const gameId = 1;
+
+    fetch(`/strona-z-grami/backend/check_favorite.php?game_id=${gameId}`)
+    .then(res => res.text())
+    .then(data => {
+
+        if(data === "true"){
+            btn.classList.add("active");
+            btn.innerHTML = "❤️ W ulubionych";
+        }
+
+    });
+
+}
+function toggleFavorite(gameId) {
+
+    const btn = document.getElementById("favoriteBtn");
+
+    if (btn.classList.contains("active")) {
+
+        fetch('/strona-z-grami/backend/remove_favorite.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `game_id=${gameId}`
+        })
+        .then(() => {
+            btn.classList.remove("active");
+            btn.innerHTML = "☆ Dodaj do ulubionych";
+        });
+
+    } else {
+
+        fetch('/strona-z-grami/backend/add_favorite.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `game_id=${gameId}`
+        })
+        .then(() => {
+            btn.classList.add("active");
+            btn.innerHTML = "❤️ W ulubionych";
+        });
+
+    }
+}
