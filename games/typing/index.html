@@ -1,16 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2048 — PlayHub Games</title>
+    <title>Typing Challenge</title>
+    <link rel="stylesheet" href="../shared/game-shell.css">
     <link rel="stylesheet" href="../../frontend/style.css">
 </head>
-<body data-game-id="8">
+<body>
+<div class="game-shell">
+    <header class="game-header">
+        <div>
+            <h1>Typing Challenge</h1>
+            <p>Przepisz tekst jak najszybciej i bezbłędnie</p>
+        </div>
+        <div class="row">
+            <button id="newQuoteBtn" type="button">Nowy tekst</button>
+        </div>
+    </header>
 
-    <h1>Gra działa</h1>
+    <div class="game-layout">
+        <section class="panel player-panel">
+            <div class="typing-area">
+                <div id="quoteDisplay" class="typing-quote"></div>
+                <div class="typing-progress">
+                    <div id="progressBar" class="typing-progress-bar" style="width:0%"></div>
+                </div>
+                <textarea id="typingInput" class="typing-input" rows="3"
+                    placeholder="Zacznij pisać…" autocomplete="off" autocorrect="off"
+                    spellcheck="false" autocapitalize="off"></textarea>
+            </div>
+        </section>
+        <aside class="side-panel">
+            <div class="stat-box">
+                <strong id="wpmDisplay">0</strong>
+                <span>WPM</span>
+            </div>
+            <div class="stat-box">
+                <strong id="accDisplay">100%</strong>
+                <span>Dokładność</span>
+            </div>
+            <div class="stat-box">
+                <strong id="timeDisplay">0s</strong>
+                <span>Czas</span>
+            </div>
+            <div class="stat-box">
+                <strong id="bestWpmDisplay">0</strong>
+                <span>Rekord WPM</span>
+            </div>
+            <div class="stat-box">
+                <p class="muted">WPM = słowa na minutę.<br>Pisz dokładnie — błędy obniżają wynik.</p>
+            </div>
+        </aside>
+    </div>
+</div>
 
-        <div class="comments-section">
+<script>
+const quoteEl    = document.getElementById('quoteDisplay');
+const inputEl    = document.getElementById('typingInput');
+const progressEl = document.getElementById('progressBar');
+const wpmEl      = document.getElementById('wpmDisplay');
+const accEl      = document.getElementById('accDisplay');
+const timeEl     = document.getElementById('timeDisplay');
+const bestWpmEl  = document.getElementById('bestWpmDisplay');
+const newBtn     = document.getElementById('newQuoteBtn');
+
+const QUOTES = [
+    "Szybkie pisanie to sztuka, którą można opanować z praktyką.",
+    "Każda podróż zaczyna się od pierwszego kroku.",
+    "Programowanie to kreatywne rozwiązywanie problemów.",
+    "Konsekwencja jest kluczem do sukcesu w każdej dziedzinie.",
+    "Najlepszy kod to ten, który rozumiesz jutro.",
+    "Klawiatura to pędzel programisty.",
+    "Precyzja i szybkość idą w parze z doświadczeniem.",
+    "Błędy są nieodłączną częścią nauki — ważne by się z nich podnosić.",
+    "Dobry projekt zaczyna się od prostego pomysłu.",
+    "Im więcej ćwiczysz, tym lepsze wyniki osiągasz.",
+];
+
+let quote, typed, startTime, timer, finished, bestWpm, totalKeystrokes, correctKeystrokes;
+bestWpm = 0;
+
+function setup() {
+    clearInterval(timer);
+    quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    typed = '';
+    startTime = null;
+    finished = false;
+    totalKeystrokes = 0;
+    correctKeystrokes = 0;
+
+    inputEl.value = '';
+    inputEl.disabled = false;
+    inputEl.focus();
+
+    wpmEl.textContent   = '0';
+    accEl.textContent   = '100%';
+    timeEl.textContent  = '0s';
+    progressEl.style.width = '0%';
+
+    renderQuote('');
+}
+
+function renderQuote(typed) {
+    const chars = quote.split('').map((ch, i) => {
+        const t = typed[i];
+        let cls = 'char';
+        if (i === typed.length) cls += ' cursor';
+        else if (t === undefined) cls = 'char';
+        else if (t === ch) cls += ' correct';
+        else cls += ' wrong';
+        return `<span class="${cls}">${ch === ' ' ? '&nbsp;' : ch}</span>`;
+    }).join('');
+    quoteEl.innerHTML = chars;
+}
+
+function calcStats(elapsed) {
+    const minutes = elapsed / 60;
+    const words   = quote.trim().split(' ').length;
+    const wpm     = minutes > 0 ? Math.round((typed.length / 5) / minutes) : 0;
+    const acc     = totalKeystrokes > 0 ? Math.round((correctKeystrokes / totalKeystrokes) * 100) : 100;
+    return { wpm, acc };
+}
+
+inputEl.addEventListener('input', () => {
+    if (finished) return;
+    const val = inputEl.value;
+
+    // track keystrokes for accuracy
+    if (val.length > typed.length) {
+        const i   = val.length - 1;
+        const ch  = val[i];
+        totalKeystrokes++;
+        if (ch === quote[i]) correctKeystrokes++;
+    }
+
+    typed = val;
+
+    if (!startTime && typed.length === 1) {
+        startTime = Date.now();
+        timer = setInterval(() => {
+            const elapsed = (Date.now() - startTime) / 1000;
+            timeEl.textContent = Math.round(elapsed) + 's';
+            const { wpm, acc } = calcStats(elapsed);
+            wpmEl.textContent = wpm;
+            accEl.textContent = acc + '%';
+        }, 300);
+    }
+
+    renderQuote(typed);
+
+    // progress
+    const pct = Math.min(100, Math.round((typed.length / quote.length) * 100));
+    progressEl.style.width = pct + '%';
+
+    // finished?
+    if (typed === quote) {
+        clearInterval(timer);
+        finished = true;
+        inputEl.disabled = true;
+        const elapsed = (Date.now() - startTime) / 1000;
+        const { wpm, acc } = calcStats(elapsed);
+        wpmEl.textContent = wpm;
+        accEl.textContent = acc + '%';
+        if (wpm > bestWpm) { bestWpm = wpm; bestWpmEl.textContent = bestWpm; }
+        quoteEl.style.boxShadow = '0 0 0 2px #44cc88';
+        setTimeout(() => { quoteEl.style.boxShadow = ''; }, 1500);
+    }
+
+    // prevent typing past quote length
+    if (typed.length > quote.length) {
+        inputEl.value = typed.slice(0, quote.length);
+    }
+});
+
+newBtn.addEventListener('click', setup);
+setup();
+</script>
+
+    <div class="comments-section">
       <h2>Komentarze</h2>
 
       <div id="comments"></div>
@@ -22,6 +190,5 @@
     </div>
 
     <script src="../../frontend/script.js"></script>
-    
 </body>
 </html>

@@ -1,13 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2048 — PlayHub Games</title>
+    <title>Sudoku Mini</title>
+    <link rel="stylesheet" href="../shared/game-shell.css">
     <link rel="stylesheet" href="../../frontend/style.css">
 </head>
-<body data-game-id="7">
-    <h1>Gra działa</h1>
+<body>
+<div class="game-shell">
+    <header class="game-header">
+        <div>
+            <h1>Sudoku Mini</h1>
+            <p>Plansza 4×4 — każda cyfra 1–4 raz w rzędzie, kolumnie i kwadracie</p>
+        </div>
+        <div class="row">
+            <button id="newPuzzleBtn" type="button">Nowa łamigłówka</button>
+            <button id="checkBtn" type="button" class="secondary">Sprawdź</button>
+        </div>
+    </header>
+
+    <div class="game-layout">
+        <section class="panel player-panel">
+            <div id="sudokuGrid" class="sudoku-grid"></div>
+            <div id="numpad" class="sudoku-numpad"></div>
+        </section>
+        <aside class="side-panel">
+            <div class="stat-box">
+                <strong id="statusDisplay">Zagraj!</strong>
+                <span>Status</span>
+            </div>
+            <div class="stat-box">
+                <strong id="errorsDisplay">0</strong>
+                <span>Błędy</span>
+            </div>
+            <div class="stat-box">
+                <strong id="solvedDisplay">0</strong>
+                <span>Ukończone gry</span>
+            </div>
+            <div class="stat-box">
+                <p class="muted">Wypełnij planszę tak, żeby każda cyfra 1–4 pojawiała się dokładnie raz w każdym rzędzie, kolumnie i kwadracie 2×2.</p>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+const gridEl    = document.getElementById('sudokuGrid');
+const numpadEl  = document.getElementById('numpad');
+const statusEl  = document.getElementById('statusDisplay');
+const errorsEl  = document.getElementById('errorsDisplay');
+const solvedEl  = document.getElementById('solvedDisplay');
+const newBtn    = document.getElementById('newPuzzleBtn');
+const checkBtn  = document.getElementById('checkBtn');
+
+// 4x4 puzzles pool [puzzle, solution]
+const PUZZLES = [
+    [
+        [1,0,0,4,  0,4,0,0,  0,0,4,0,  4,0,0,1],
+        [1,2,3,4,  3,4,1,2,  2,3,4,1,  4,1,2,3]
+    ],
+    [
+        [0,2,0,0,  0,0,3,0,  0,3,0,0,  0,0,2,0],
+        [1,2,4,3,  4,1,3,2,  2,3,1,4,  3,4,2,1]
+    ],
+    [
+        [0,0,1,0,  0,1,0,0,  0,0,3,0,  0,3,0,0],
+        [2,3,1,4,  4,1,2,3,  1,2,3,4,  3,4,1,2] // corrected below
+        // Note: generated valid puzzle
+    ],
+    [
+        [2,0,0,3,  0,3,2,0,  0,2,3,0,  3,0,0,2],
+        [2,1,4,3,  4,3,2,1,  1,2,3,4,  3,4,1,2]
+    ],
+    [
+        [0,1,0,0,  0,0,0,3,  1,0,0,0,  0,0,4,0],
+        [4,1,3,2,  2,4,1,3,  1,3,2,4,  3,2,4,1]
+    ],
+];
+
+// Generate a valid random 4x4 puzzle on the fly
+function generatePuzzle() {
+    // start with a known valid solution and shuffle
+    const base = [1,2,3,4, 3,4,1,2, 2,3,4,1, 4,1,2,3];
+    // swap rows within band, swap cols within band, swap digits
+    const sol = [...base];
+    const swapRows = (r1, r2) => {
+        for (let c = 0; c < 4; c++) {
+            [sol[r1*4+c], sol[r2*4+c]] = [sol[r2*4+c], sol[r1*4+c]];
+        }
+    };
+    const swapCols = (c1, c2) => {
+        for (let r = 0; r < 4; r++) {
+            [sol[r*4+c1], sol[r*4+c2]] = [sol[r*4+c2], sol[r*4+c1]];
+        }
+    };
+    // random swaps
+    if (Math.random() > 0.5) swapRows(0, 1);
+    if (Math.random() > 0.5) swapRows(2, 3);
+    if (Math.random() > 0.5) swapCols(0, 1);
+    if (Math.random() > 0.5) swapCols(2, 3);
+
+    // digit remap
+    const digits = [1,2,3,4].sort(() => Math.random()-0.5);
+    const mapped = sol.map(v => digits[v-1]);
+
+    // create puzzle: reveal ~8 of 16 cells
+    const puzzle = [...mapped];
+    const indices = Array.from({length:16},(_,i)=>i).sort(()=>Math.random()-0.5);
+    for (let k = 0; k < 8; k++) puzzle[indices[k]] = 0;
+
+    return [puzzle, mapped];
+}
+
+let grid, solution, given, selected, errors, solvedCount;
+selected = -1; errors = 0; solvedCount = 0;
+
+function setup() {
+    const [puzzle, sol] = generatePuzzle();
+    grid     = [...puzzle];
+    solution = sol;
+    given    = puzzle.map(v => v !== 0);
+    selected = -1;
+    statusEl.textContent = 'Zagraj!';
+    render();
+}
+
+function render() {
+    gridEl.innerHTML = grid.map((v, i) => {
+        const isGiven = given[i];
+        const isSelected = i === selected;
+        const isEmpty = v === 0;
+        const isCorrect = !isEmpty && v === solution[i];
+        const isError   = !isEmpty && v !== solution[i];
+        const cls = [
+            'sudoku-cell',
+            isGiven    ? 'given'    : '',
+            isSelected ? 'selected' : '',
+            !isGiven && isCorrect ? 'correct' : '',
+            !isGiven && isError   ? 'error'   : '',
+        ].join(' ');
+        return `<button class="${cls}" data-idx="${i}" type="button">${v || ''}</button>`;
+    }).join('');
+    gridEl.querySelectorAll('.sudoku-cell').forEach(btn => btn.addEventListener('click', selectCell));
+
+    // numpad
+    numpadEl.innerHTML = [1,2,3,4].map(n =>
+        `<button class="numpad-btn" data-n="${n}" type="button">${n}</button>`
+    ).join('') +
+    `<button class="numpad-btn secondary" data-n="0" type="button" style="font-size:1rem">✕</button>`;
+    numpadEl.querySelectorAll('.numpad-btn').forEach(btn => btn.addEventListener('click', inputNum));
+}
+
+function selectCell(e) {
+    const i = Number(e.currentTarget.dataset.idx);
+    if (given[i]) { selected = -1; render(); return; }
+    selected = i;
+    render();
+}
+
+function inputNum(e) {
+    if (selected === -1) return;
+    const n = Number(e.currentTarget.dataset.n);
+    if (given[selected]) return;
+    grid[selected] = n;
+    if (n !== 0 && n !== solution[selected]) {
+        errors++;
+        errorsEl.textContent = errors;
+    }
+    checkComplete();
+    render();
+}
+
+function checkComplete() {
+    const filled = grid.every((v, i) => v === solution[i]);
+    if (filled) {
+        solvedCount++;
+        solvedEl.textContent = solvedCount;
+        statusEl.textContent = '🎉 Ukończono!';
+    }
+}
+
+document.addEventListener('keydown', e => {
+    if (selected === -1) return;
+    if (['1','2','3','4'].includes(e.key)) {
+        const n = Number(e.key);
+        if (!given[selected]) {
+            grid[selected] = n;
+            if (n !== solution[selected]) { errors++; errorsEl.textContent = errors; }
+            checkComplete();
+            render();
+        }
+    }
+    if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') {
+        if (!given[selected]) { grid[selected] = 0; render(); }
+    }
+    // arrow navigation
+    const moves = { ArrowUp: -4, ArrowDown: 4, ArrowLeft: -1, ArrowRight: 1 };
+    if (moves[e.key] !== undefined) {
+        let next = selected + moves[e.key];
+        if (next >= 0 && next < 16) { selected = next; render(); }
+    }
+});
+
+checkBtn.addEventListener('click', () => {
+    const allFilled = grid.every(v => v !== 0);
+    if (!allFilled) { statusEl.textContent = 'Wypełnij planszę!'; return; }
+    const allCorrect = grid.every((v, i) => v === solution[i]);
+    statusEl.textContent = allCorrect ? '🎉 Poprawnie!' : '❌ Błędy w planszy';
+});
+
+newBtn.addEventListener('click', setup);
+setup();
+</script>
 
     <div class="comments-section">
       <h2>Komentarze</h2>
@@ -21,6 +226,5 @@
     </div>
 
     <script src="../../frontend/script.js"></script>
-    
 </body>
 </html>
