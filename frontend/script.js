@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data.forEach(game => {
           const div = document.createElement('div');
           div.classList.add('card');
+          div.dataset.category = game.category;
 
           const img = game.thumbnail ? game.thumbnail : 'default.jpg';
 
@@ -135,4 +136,23 @@ document.getElementById("search").addEventListener("input", function() {
         card.style.display =
             title.includes(value) ? "block" : "none";
     });
+});
+
+document.getElementById('categoryFilter').addEventListener('change', function() {
+
+    const selectedCategory = this.value;
+
+    document.querySelectorAll('.card').forEach(card => {
+
+        if (
+            selectedCategory === '' ||
+            card.dataset.category === selectedCategory
+        ) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+
+    });
+
 });
