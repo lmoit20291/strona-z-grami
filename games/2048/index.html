@@ -1,14 +1,720 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2048 — PlayHub Games</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>2048 – Projekt klasowy</title>
+    <style>
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #050b14;
+            --surface:   #0a1420;
+            --surface2:  #0f1a2a;
+            --border:    #1e2a3a;
+            --accent:    #1e88e5;
+            --accent2:   #0d6ebd;
+            --text:      #ffffff;
+            --muted:     #8ba3c0;
+            --radius:    12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-shell {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 32px;
+            background: #0a111c;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .game-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .game-header p {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .game-layout {
+            display: flex;
+            flex: 1;
+            gap: 0;
+            padding: 24px 32px;
+            flex-wrap: wrap;
+        }
+
+        .player-panel {
+            flex: 2;
+            min-width: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .side-panel {
+            flex: 1;
+            min-width: 200px;
+            background: #0a111c;
+            border-left: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        @media (max-width: 700px) {
+            .game-layout { flex-direction: column; padding: 16px; }
+            .player-panel { padding: 0; }
+            .side-panel { width: 100%; border-left: none; border-top: 1px solid var(--border); margin-top: 20px; flex-direction: row; flex-wrap: wrap; }
+            .stat-box { flex: 1; min-width: 120px; }
+        }
+
+        .stat-box {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-box strong {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        .stat-box span {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-box p.muted {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        button, .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover { background: var(--accent2); transform: scale(1.02); }
+
+        /* ========== STYLE DLA 2048 – CZYSTO NIEBIESKIE KAFELKI ========== */
+        .game-container {
+            position: relative;
+            background: #0f1a2a;
+            border-radius: 24px;
+            padding: 15px;
+            width: 500px;
+            height: 500px;
+            box-shadow: inset 0 0 0 1px rgba(30,136,229,0.2), 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .grid-container {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .grid-row {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .grid-cell {
+            background: rgba(20, 30, 50, 0.8);
+            border-radius: 16px;
+            flex: 1;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .tile-container {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            z-index: 2;
+        }
+
+        .tile {
+            position: absolute;
+            transition: transform 0.1s ease-in-out;
+        }
+
+        /* JEDNOLITE, NIEBIESKIE TŁO – BEZ KREMOWEGO */
+        .tile .tile-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 2rem;
+            text-align: center;
+            background: #1e88e5;  /* podstawowy niebieski */
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Dla wszystkich wartości – ten sam niebieski, bez gradientów */
+        .tile-2 .tile-inner { background: #1e88e5; }
+        .tile-4 .tile-inner { background: #1e88e5; }
+        .tile-8 .tile-inner { background: #1e88e5; }
+        .tile-16 .tile-inner { background: #1e88e5; }
+        .tile-32 .tile-inner { background: #1e88e5; }
+        .tile-64 .tile-inner { background: #1e88e5; }
+        .tile-128 .tile-inner { background: #1e88e5; }
+        .tile-256 .tile-inner { background: #1e88e5; }
+        .tile-512 .tile-inner { background: #1e88e5; }
+        .tile-1024 .tile-inner { background: #1e88e5; }
+        .tile-2048 .tile-inner { background: #1e88e5; }
+        .tile-super .tile-inner { background: #0d6ebd; font-size: 1.2rem; }
+
+        /* pozycje kafelków – dla desktop (wymiary: 121px przesunięcie) */
+        .tile-position-1-1 { transform: translate(0px, 0px); }
+        .tile-position-1-2 { transform: translate(0px, 121px); }
+        .tile-position-1-3 { transform: translate(0px, 242px); }
+        .tile-position-1-4 { transform: translate(0px, 363px); }
+        .tile-position-2-1 { transform: translate(121px, 0px); }
+        .tile-position-2-2 { transform: translate(121px, 121px); }
+        .tile-position-2-3 { transform: translate(121px, 242px); }
+        .tile-position-2-4 { transform: translate(121px, 363px); }
+        .tile-position-3-1 { transform: translate(242px, 0px); }
+        .tile-position-3-2 { transform: translate(242px, 121px); }
+        .tile-position-3-3 { transform: translate(242px, 242px); }
+        .tile-position-3-4 { transform: translate(242px, 363px); }
+        .tile-position-4-1 { transform: translate(363px, 0px); }
+        .tile-position-4-2 { transform: translate(363px, 121px); }
+        .tile-position-4-3 { transform: translate(363px, 242px); }
+        .tile-position-4-4 { transform: translate(363px, 363px); }
+
+        /* animacje */
+        @keyframes appear {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .tile-new .tile-inner { animation: appear 0.15s ease-out; }
+
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .tile-merged .tile-inner { animation: pop 0.15s ease-out; }
+
+        /* komunikat końca gry */
+        .game-message {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .game-message p {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        .game-message .lower {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .game-message a {
+            background: var(--accent);
+            padding: 8px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .game-message.game-won, .game-message.game-over { display: flex; }
+
+        /* sekcja komentarzy */
+        .comments-section {
+            margin: 30px 32px 40px;
+            background: #0a111c;
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+        .comments-section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent);
+            padding-left: 16px;
+        }
+        .comments-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .comment-item {
+            display: flex;
+            gap: 14px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 20px;
+            padding: 14px 18px;
+        }
+        .comment-avatar {
+            font-size: 32px;
+            background: var(--surface2);
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+        }
+        .comment-content { flex: 1; }
+        .comment-author { font-weight: bold; color: var(--accent); margin-bottom: 4px; }
+        .comment-text { font-size: 0.9rem; color: #ddd; margin-bottom: 6px; }
+        .comment-date { font-size: 0.7rem; color: var(--muted); }
+        .comment-empty { text-align: center; padding: 20px; color: var(--muted); }
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .comment-form input, .comment-form textarea {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 12px 18px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: white;
+            resize: vertical;
+            outline: none;
+        }
+        .comment-form input:focus, .comment-form textarea:focus {
+            border-color: var(--accent);
+        }
+        .comment-form button {
+            align-self: flex-end;
+            background: var(--accent);
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+        }
+
+        /* responsywność */
+        @media (max-width: 550px) {
+            .game-container { width: 280px; height: 280px; padding: 10px; }
+            .grid-container, .tile-container { top: 10px; left: 10px; right: 10px; bottom: 10px; gap: 10px; }
+            .grid-row { gap: 10px; }
+            .tile .tile-inner { font-size: 1.2rem; }
+            .tile-position-1-2 { transform: translate(0px, 67px); }
+            .tile-position-1-3 { transform: translate(0px, 135px); }
+            .tile-position-1-4 { transform: translate(0px, 202px); }
+            .tile-position-2-1 { transform: translate(67px, 0px); }
+            .tile-position-2-2 { transform: translate(67px, 67px); }
+            .tile-position-2-3 { transform: translate(67px, 135px); }
+            .tile-position-2-4 { transform: translate(67px, 202px); }
+            .tile-position-3-1 { transform: translate(135px, 0px); }
+            .tile-position-3-2 { transform: translate(135px, 67px); }
+            .tile-position-3-3 { transform: translate(135px, 135px); }
+            .tile-position-3-4 { transform: translate(135px, 202px); }
+            .tile-position-4-1 { transform: translate(202px, 0px); }
+            .tile-position-4-2 { transform: translate(202px, 67px); }
+            .tile-position-4-3 { transform: translate(202px, 135px); }
+            .tile-position-4-4 { transform: translate(202px, 202px); }
+            .comments-section { margin: 20px 16px; padding: 16px; }
+        }
+        
+    </style>
     <link rel="stylesheet" href="../../frontend/style.css">
 </head>
 <body data-game-id="5">
-    <h1>Gra działa</h1>
-    
+  <header>
+        <h1>PlayHub Games</h1>
+        <nav>
+            <a href="../../frontend/index.html">Home</a>
+            <a href="../../frontend/games.html">Gry</a>
+            <a href="../../frontend/login.html" id="authBtn">Logowanie</a>
+        </nav>
+    </header>
+<div class="game-shell">
+    <header class="game-header">
+        <div>
+            <h1>2048</h1>
+            <p>Połącz cyfry i zdobądź 2048!</p>
+        </div>
+        <div>
+            <button id="newGameBtn">Nowa gra</button>
+        </div>
+    </header>
+
+    <div class="game-layout">
+        <section class="player-panel">
+            <div class="game-container">
+                <div class="game-message">
+                    <p></p>
+                    <div class="lower">
+                        <a class="keep-playing-button">Kontynuuj</a>
+                        <a class="retry-button">Jeszcze raz</a>
+                    </div>
+                </div>
+                <div class="grid-container">
+                    <div class="grid-row"><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div></div>
+                    <div class="grid-row"><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div></div>
+                    <div class="grid-row"><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div></div>
+                    <div class="grid-row"><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div></div>
+                </div>
+                <div class="tile-container"></div>
+            </div>
+        </section>
+
+        <aside class="side-panel">
+            <div class="stat-box">
+                <strong id="scoreDisplay">0</strong>
+                <span>Wynik</span>
+            </div>
+            <div class="stat-box">
+                <strong id="bestDisplay">0</strong>
+                <span>Najlepszy</span>
+            </div>
+            <div class="stat-box">
+                <p class="muted">Użyj strzałek<br>lub WASD</p>
+            </div>
+        </aside>
+    </div>
+
+<script>
+
+    // ========== KOD GRY 2048 ==========
+    // polyfill bind
+    Function.prototype.bind = Function.prototype.bind || function (target) {
+        var self = this;
+        return function (args) {
+            if (!(args instanceof Array)) args = [args];
+            self.apply(target, args);
+        };
+    };
+
+    // polyfill classList
+    (function () {
+        if (typeof window.Element === "undefined" || "classList" in document.documentElement) return;
+        var prototype = Array.prototype, push = prototype.push, splice = prototype.splice, join = prototype.join;
+        function DOMTokenList(el) { this.el = el; var classes = el.className.replace(/^\s+|\s+$/g, '').split(/\s+/); for (var i = 0; i < classes.length; i++) push.call(this, classes[i]); }
+        DOMTokenList.prototype = {
+            add: function(token) { if (!this.contains(token)) { push.call(this, token); this.el.className = this.toString(); } },
+            contains: function(token) { return this.el.className.indexOf(token) != -1; },
+            item: function(index) { return this[index] || null; },
+            remove: function(token) { if (this.contains(token)) { for (var i = 0; i < this.length; i++) if (this[i] == token) break; splice.call(this, i, 1); this.el.className = this.toString(); } },
+            toString: function() { return join.call(this, ' '); },
+            toggle: function(token) { if (!this.contains(token)) this.add(token); else this.remove(token); return this.contains(token); }
+        };
+        window.DOMTokenList = DOMTokenList;
+        function defineElementGetter(obj, prop, getter) { if (Object.defineProperty) Object.defineProperty(obj, prop, { get: getter }); else obj.__defineGetter__(prop, getter); }
+        defineElementGetter(HTMLElement.prototype, 'classList', function () { return new DOMTokenList(this); });
+    })();
+
+    // requestAnimationFrame polyfill
+    (function() {
+        var lastTime = 0;
+        var vendors = ['webkit', 'moz'];
+        for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+            window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+            window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+        }
+        if (!window.requestAnimationFrame) {
+            window.requestAnimationFrame = function(callback) {
+                var currTime = new Date().getTime();
+                var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+                lastTime = currTime + timeToCall;
+                return id;
+            };
+        }
+        if (!window.cancelAnimationFrame) {
+            window.cancelAnimationFrame = function(id) { clearTimeout(id); };
+        }
+    })();
+
+    // KeyboardInputManager
+    function KeyboardInputManager() {
+        this.events = {};
+        if (window.navigator.msPointerEnabled) {
+            this.eventTouchstart = "MSPointerDown";
+            this.eventTouchmove = "MSPointerMove";
+            this.eventTouchend = "MSPointerUp";
+        } else {
+            this.eventTouchstart = "touchstart";
+            this.eventTouchmove = "touchmove";
+            this.eventTouchend = "touchend";
+        }
+        this.listen();
+    }
+    KeyboardInputManager.prototype.on = function(event, callback) { if (!this.events[event]) this.events[event] = []; this.events[event].push(callback); };
+    KeyboardInputManager.prototype.emit = function(event, data) { var callbacks = this.events[event]; if (callbacks) callbacks.forEach(function(callback) { callback(data); }); };
+    KeyboardInputManager.prototype.listen = function() {
+        var self = this;
+        var map = { 38:0, 39:1, 40:2, 37:3, 75:0, 76:1, 74:2, 72:3, 87:0, 68:1, 83:2, 65:3 };
+        document.addEventListener("keydown", function(event) {
+            var modifiers = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+            var mapped = map[event.which];
+            if (!modifiers && mapped !== undefined) { event.preventDefault(); self.emit("move", mapped); }
+            if (!modifiers && event.which === 82) { self.restart.call(self, event); }
+        });
+        this.bindButtonPress(".retry-button", this.restart);
+        this.bindButtonPress(".restart-button", this.restart);
+        this.bindButtonPress(".keep-playing-button", this.keepPlaying);
+        var touchStartClientX, touchStartClientY;
+        var gameContainer = document.getElementsByClassName("game-container")[0];
+        if (gameContainer) {
+            gameContainer.addEventListener(this.eventTouchstart, function(event) {
+                if ((!window.navigator.msPointerEnabled && event.touches.length > 1) || event.targetTouches.length > 1) return;
+                if (window.navigator.msPointerEnabled) { touchStartClientX = event.pageX; touchStartClientY = event.pageY; }
+                else { touchStartClientX = event.touches[0].clientX; touchStartClientY = event.touches[0].clientY; }
+                event.preventDefault();
+            });
+            gameContainer.addEventListener(this.eventTouchmove, function(event) { event.preventDefault(); });
+            gameContainer.addEventListener(this.eventTouchend, function(event) {
+                if ((!window.navigator.msPointerEnabled && event.touches.length > 0) || event.targetTouches.length > 0) return;
+                var touchEndClientX, touchEndClientY;
+                if (window.navigator.msPointerEnabled) { touchEndClientX = event.pageX; touchEndClientY = event.pageY; }
+                else { touchEndClientX = event.changedTouches[0].clientX; touchEndClientY = event.changedTouches[0].clientY; }
+                var dx = touchEndClientX - touchStartClientX, absDx = Math.abs(dx);
+                var dy = touchEndClientY - touchStartClientY, absDy = Math.abs(dy);
+                if (Math.max(absDx, absDy) > 10) { self.emit("move", absDx > absDy ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0)); }
+            });
+        }
+    };
+    KeyboardInputManager.prototype.restart = function(event) { if (event) event.preventDefault(); this.emit("restart"); };
+    KeyboardInputManager.prototype.keepPlaying = function(event) { if (event) event.preventDefault(); this.emit("keepPlaying"); };
+    KeyboardInputManager.prototype.bindButtonPress = function(selector, fn) {
+        var button = document.querySelector(selector);
+        if (button) {
+            button.addEventListener("click", fn.bind(this));
+            button.addEventListener(this.eventTouchend, fn.bind(this));
+        }
+    };
+
+    // HTMLActuator
+    function HTMLActuator() {
+        this.tileContainer = document.querySelector(".tile-container");
+        this.messageContainer = document.querySelector(".game-message");
+        this.score = 0;
+        this.scoreSpan = document.getElementById("scoreDisplay");
+        this.bestSpan = document.getElementById("bestDisplay");
+    }
+    HTMLActuator.prototype.actuate = function(grid, metadata) {
+        var self = this;
+        window.requestAnimationFrame(function() {
+            self.clearContainer(self.tileContainer);
+            grid.cells.forEach(function(column) { column.forEach(function(cell) { if (cell) self.addTile(cell); }); });
+            self.updateScore(metadata.score);
+            self.updateBestScore(metadata.bestScore);
+            if (metadata.terminated) {
+                if (metadata.over) self.message(false);
+                else if (metadata.won) self.message(true);
+            }
+        });
+    };
+    HTMLActuator.prototype.continueGame = function() { this.clearMessage(); };
+    HTMLActuator.prototype.clearContainer = function(container) { while (container.firstChild) container.removeChild(container.firstChild); };
+    HTMLActuator.prototype.addTile = function(tile) {
+        var self = this;
+        var wrapper = document.createElement("div");
+        var inner = document.createElement("div");
+        var position = tile.previousPosition || { x: tile.x, y: tile.y };
+        var positionClass = this.positionClass(position);
+        var classes = ["tile", "tile-" + tile.value, positionClass];
+        if (tile.value > 2048) classes.push("tile-super");
+        this.applyClasses(wrapper, classes);
+        inner.classList.add("tile-inner");
+        inner.textContent = tile.value;
+        if (tile.previousPosition) {
+            window.requestAnimationFrame(function() { classes[2] = self.positionClass({ x: tile.x, y: tile.y }); self.applyClasses(wrapper, classes); });
+        } else if (tile.mergedFrom) {
+            classes.push("tile-merged");
+            this.applyClasses(wrapper, classes);
+            tile.mergedFrom.forEach(function(merged) { self.addTile(merged); });
+        } else {
+            classes.push("tile-new");
+            this.applyClasses(wrapper, classes);
+        }
+        wrapper.appendChild(inner);
+        this.tileContainer.appendChild(wrapper);
+    };
+    HTMLActuator.prototype.applyClasses = function(element, classes) { element.setAttribute("class", classes.join(" ")); };
+    HTMLActuator.prototype.normalizePosition = function(position) { return { x: position.x + 1, y: position.y + 1 }; };
+    HTMLActuator.prototype.positionClass = function(position) { position = this.normalizePosition(position); return "tile-position-" + position.x + "-" + position.y; };
+    HTMLActuator.prototype.updateScore = function(score) {
+        this.score = score;
+        if (this.scoreSpan) this.scoreSpan.textContent = this.score;
+    };
+    HTMLActuator.prototype.updateBestScore = function(bestScore) {
+        if (this.bestSpan) this.bestSpan.textContent = bestScore;
+    };
+    HTMLActuator.prototype.message = function(won) {
+        var type = won ? "game-won" : "game-over";
+        var message = won ? "Wygrałeś!" : "Koniec gry!";
+        this.messageContainer.classList.add(type);
+        var p = this.messageContainer.querySelector("p");
+        if (p) p.textContent = message;
+    };
+    HTMLActuator.prototype.clearMessage = function() { this.messageContainer.classList.remove("game-won", "game-over"); };
+
+    // Grid
+    function Grid(size, previousState) { this.size = size; this.cells = previousState ? this.fromState(previousState) : this.empty(); }
+    Grid.prototype.empty = function() { var cells = []; for (var x = 0; x < this.size; x++) { var row = cells[x] = []; for (var y = 0; y < this.size; y++) row.push(null); } return cells; };
+    Grid.prototype.fromState = function(state) { var cells = []; for (var x = 0; x < this.size; x++) { var row = cells[x] = []; for (var y = 0; y < this.size; y++) { var tile = state[x][y]; row.push(tile ? new Tile(tile.position, tile.value) : null); } } return cells; };
+    Grid.prototype.randomAvailableCell = function() { var cells = this.availableCells(); if (cells.length) return cells[Math.floor(Math.random() * cells.length)]; };
+    Grid.prototype.availableCells = function() { var cells = []; this.eachCell(function(x,y,tile) { if (!tile) cells.push({x:x,y:y}); }); return cells; };
+    Grid.prototype.eachCell = function(callback) { for (var x = 0; x < this.size; x++) for (var y = 0; y < this.size; y++) callback(x, y, this.cells[x][y]); };
+    Grid.prototype.cellsAvailable = function() { return !!this.availableCells().length; };
+    Grid.prototype.cellAvailable = function(cell) { return !this.cellOccupied(cell); };
+    Grid.prototype.cellOccupied = function(cell) { return !!this.cellContent(cell); };
+    Grid.prototype.cellContent = function(cell) { if (this.withinBounds(cell)) return this.cells[cell.x][cell.y]; else return null; };
+    Grid.prototype.insertTile = function(tile) { this.cells[tile.x][tile.y] = tile; };
+    Grid.prototype.removeTile = function(tile) { this.cells[tile.x][tile.y] = null; };
+    Grid.prototype.withinBounds = function(position) { return position.x >= 0 && position.x < this.size && position.y >= 0 && position.y < this.size; };
+    Grid.prototype.serialize = function() { var cellState = []; for (var x = 0; x < this.size; x++) { var row = cellState[x] = []; for (var y = 0; y < this.size; y++) row.push(this.cells[x][y] ? this.cells[x][y].serialize() : null); } return { size: this.size, cells: cellState }; };
+
+    // Tile
+    function Tile(position, value) { this.x = position.x; this.y = position.y; this.value = value || 2; this.previousPosition = null; this.mergedFrom = null; }
+    Tile.prototype.savePosition = function() { this.previousPosition = { x: this.x, y: this.y }; };
+    Tile.prototype.updatePosition = function(position) { this.x = position.x; this.y = position.y; };
+    Tile.prototype.serialize = function() { return { position: { x: this.x, y: this.y }, value: this.value }; };
+
+    // LocalStorageManager
+    window.fakeStorage = { _data: {}, setItem: function(id,val) { return this._data[id] = String(val); }, getItem: function(id) { return this._data.hasOwnProperty(id) ? this._data[id] : undefined; }, removeItem: function(id) { return delete this._data[id]; }, clear: function() { return this._data = {}; } };
+    function LocalStorageManager() { this.bestScoreKey = "bestScore"; this.gameStateKey = "gameState"; var supported = this.localStorageSupported(); this.storage = supported ? window.localStorage : window.fakeStorage; }
+    LocalStorageManager.prototype.localStorageSupported = function() { var testKey = "test"; try { var storage = window.localStorage; storage.setItem(testKey,"1"); storage.removeItem(testKey); return true; } catch(e) { return false; } };
+    LocalStorageManager.prototype.getBestScore = function() { return this.storage.getItem(this.bestScoreKey) || 0; };
+    LocalStorageManager.prototype.setBestScore = function(score) { this.storage.setItem(this.bestScoreKey, score); };
+    LocalStorageManager.prototype.getGameState = function() { var stateJSON = this.storage.getItem(this.gameStateKey); return stateJSON ? JSON.parse(stateJSON) : null; };
+    LocalStorageManager.prototype.setGameState = function(gameState) { this.storage.setItem(this.gameStateKey, JSON.stringify(gameState)); };
+    LocalStorageManager.prototype.clearGameState = function() { this.storage.removeItem(this.gameStateKey); };
+
+    // GameManager
+    function GameManager(size, InputManager, Actuator, StorageManager) {
+        this.size = size; this.inputManager = new InputManager; this.storageManager = new StorageManager; this.actuator = new Actuator;
+        this.startTiles = 2;
+        this.inputManager.on("move", this.move.bind(this)); this.inputManager.on("restart", this.restart.bind(this)); this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
+        this.setup();
+    }
+    GameManager.prototype.restart = function() { this.storageManager.clearGameState(); this.actuator.continueGame(); this.setup(); };
+    GameManager.prototype.keepPlaying = function() { this.keepPlaying = true; this.actuator.continueGame(); };
+    GameManager.prototype.isGameTerminated = function() { return this.over || (this.won && !this.keepPlaying); };
+    GameManager.prototype.setup = function() {
+        var previousState = this.storageManager.getGameState();
+        if (previousState) { this.grid = new Grid(previousState.grid.size, previousState.grid.cells); this.score = previousState.score; this.over = previousState.over; this.won = previousState.won; this.keepPlaying = previousState.keepPlaying; }
+        else { this.grid = new Grid(this.size); this.score = 0; this.over = false; this.won = false; this.keepPlaying = false; this.addStartTiles(); }
+        this.actuate();
+    };
+    GameManager.prototype.addStartTiles = function() { for (var i = 0; i < this.startTiles; i++) this.addRandomTile(); };
+    GameManager.prototype.addRandomTile = function() { if (this.grid.cellsAvailable()) { var value = Math.random() < 0.9 ? 2 : 4; var tile = new Tile(this.grid.randomAvailableCell(), value); this.grid.insertTile(tile); } };
+    GameManager.prototype.actuate = function() {
+        if (this.storageManager.getBestScore() < this.score) this.storageManager.setBestScore(this.score);
+        if (this.over) this.storageManager.clearGameState(); else this.storageManager.setGameState(this.serialize());
+        this.actuator.actuate(this.grid, { score: this.score, over: this.over, won: this.won, bestScore: this.storageManager.getBestScore(), terminated: this.isGameTerminated() });
+    };
+    GameManager.prototype.serialize = function() { return { grid: this.grid.serialize(), score: this.score, over: this.over, won: this.won, keepPlaying: this.keepPlaying }; };
+    GameManager.prototype.prepareTiles = function() { this.grid.eachCell(function(x,y,tile) { if (tile) { tile.mergedFrom = null; tile.savePosition(); } }); };
+    GameManager.prototype.moveTile = function(tile, cell) { this.grid.cells[tile.x][tile.y] = null; this.grid.cells[cell.x][cell.y] = tile; tile.updatePosition(cell); };
+    GameManager.prototype.move = function(direction) {
+        var self = this; if (this.isGameTerminated()) return;
+        var vector = this.getVector(direction); var traversals = this.buildTraversals(vector); var moved = false;
+        this.prepareTiles();
+        traversals.x.forEach(function(x) { traversals.y.forEach(function(y) {
+            var cell = { x: x, y: y }; var tile = self.grid.cellContent(cell);
+            if (tile) {
+                var positions = self.findFarthestPosition(cell, vector); var next = self.grid.cellContent(positions.next);
+                if (next && next.value === tile.value && !next.mergedFrom) {
+                    var merged = new Tile(positions.next, tile.value * 2); merged.mergedFrom = [tile, next];
+                    self.grid.insertTile(merged); self.grid.removeTile(tile);
+                    tile.updatePosition(positions.next);
+                    self.score += merged.value;
+                    if (merged.value === 2048) self.won = true;
+                } else { self.moveTile(tile, positions.farthest); }
+                if (!self.positionsEqual(cell, tile)) moved = true;
+            }
+        }); });
+        if (moved) { this.addRandomTile(); if (!this.movesAvailable()) this.over = true; this.actuate(); }
+    };
+    GameManager.prototype.getVector = function(direction) { var map = { 0: { x:0, y:-1 }, 1: { x:1, y:0 }, 2: { x:0, y:1 }, 3: { x:-1, y:0 } }; return map[direction]; };
+    GameManager.prototype.buildTraversals = function(vector) { var traversals = { x: [], y: [] }; for (var pos = 0; pos < this.size; pos++) { traversals.x.push(pos); traversals.y.push(pos); } if (vector.x === 1) traversals.x = traversals.x.reverse(); if (vector.y === 1) traversals.y = traversals.y.reverse(); return traversals; };
+    GameManager.prototype.findFarthestPosition = function(cell, vector) { var previous; do { previous = cell; cell = { x: previous.x + vector.x, y: previous.y + vector.y }; } while (this.grid.withinBounds(cell) && this.grid.cellAvailable(cell)); return { farthest: previous, next: cell }; };
+    GameManager.prototype.movesAvailable = function() { return this.grid.cellsAvailable() || this.tileMatchesAvailable(); };
+    GameManager.prototype.tileMatchesAvailable = function() { var self = this, tile; for (var x = 0; x < this.size; x++) for (var y = 0; y < this.size; y++) { tile = this.grid.cellContent({ x: x, y: y }); if (tile) for (var d = 0; d < 4; d++) { var vector = self.getVector(d); var cell = { x: x + vector.x, y: y + vector.y }; var other = self.grid.cellContent(cell); if (other && other.value === tile.value) return true; } } return false; };
+    GameManager.prototype.positionsEqual = function(first, second) { return first.x === second.x && first.y === second.y; };
+
+    // start gry
+    window.requestAnimationFrame(function() {
+        new GameManager(4, KeyboardInputManager, HTMLActuator, LocalStorageManager);
+    });
+
+    // przycisk "Nowa gra"
+    document.getElementById("newGameBtn")?.addEventListener("click", function() {
+        var restartBtn = document.querySelector(".restart-button");
+        if (restartBtn && restartBtn.click) restartBtn.click();
+        else {
+            var event = new Event("restart");
+            document.dispatchEvent(event);
+        }
+    });
+</script>
+
     <div class="comments-section">
       <h2>Komentarze</h2>
 
