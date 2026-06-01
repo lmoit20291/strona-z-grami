@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="card-bg" style="background-image: url('${img}')"></div>
             <div class="card-content">
               <h3>${game.title}</h3>
+              <p>${game.short_description}</p>
               <button onclick="location.href='/strona-z-grami${game.game_url}'">Zagraj</button>
             </div>
           `;
