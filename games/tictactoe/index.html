@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kółko i Krzyżyk — PlayHub Games</title>
     <link rel="stylesheet" href="../shared/game-shell.css">
+    <link rel="stylesheet" href="../../frontend/style.css">
 </head>
-<body>
+<body data-game-id="2">
 <div class="game-shell">
     <header class="game-header">
         <div>
@@ -158,5 +159,19 @@ function onMove(e) {
 newRoundBtn.addEventListener('click', resetGame);
 resetGame();
 </script>
+
+
+    <div class="comments-section">
+      <h2>Komentarze</h2>
+
+      <div id="comments"></div>
+    </div>
+
+    <div class="add-comment">
+      <textarea id="commentText" placeholder="Napisz komentarz..."></textarea>
+      <button onclick="addComment()">Dodaj komentarz</button>
+    </div>
+
+    <script src="../../frontend/script.js"></script>
 </body>
 </html>

@@ -127,32 +127,80 @@ fetch('/strona-z-grami/backend/check_login.php')
   });
 
 
-document.getElementById("search").addEventListener("input", function() {
-    const value = this.value.toLowerCase();
+const searchInput = document.getElementById("search");
 
-    document.querySelectorAll(".card").forEach(card => {
-        const title = card.querySelector("h3").textContent.toLowerCase();
+if (searchInput) {
+    searchInput.addEventListener("input", function() {
+        const value = this.value.toLowerCase();
 
-        card.style.display =
-            title.includes(value) ? "block" : "none";
+        document.querySelectorAll(".card").forEach(card => {
+            const title = card.querySelector("h3").textContent.toLowerCase();
+
+            card.style.display =
+                title.includes(value) ? "block" : "none";
+        });
     });
+}
+
+const categoryFilter = document.getElementById('categoryFilter');
+
+if (categoryFilter) {
+    categoryFilter.addEventListener('change', function() {
+
+        const selectedCategory = this.value;
+
+        document.querySelectorAll('.card').forEach(card => {
+
+            if (
+                selectedCategory === '' ||
+                card.dataset.category === selectedCategory
+            ) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+
+        });
+
+    });
+}
+const gameId = document.body.dataset.gameId;
+
+
+fetch(`/strona-z-grami/backend/api/reviews.php?game_id=${gameId}`)
+    .then(res => res.json())
+    .then(data => {
+
+        console.log(data);
+
+        const commentsDiv = document.getElementById('comments');
+
+        data.forEach(review => {
+          commentsDiv.innerHTML += `
+            <div class="comment">
+              <strong>${review.username}</strong><br>
+              ${review.comment}
+            </div>
+    `;
 });
 
-document.getElementById('categoryFilter').addEventListener('change', function() {
-
-    const selectedCategory = this.value;
-
-    document.querySelectorAll('.card').forEach(card => {
-
-        if (
-            selectedCategory === '' ||
-            card.dataset.category === selectedCategory
-        ) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-
     });
 
-});
+function addComment() {
+
+    const comment = document.getElementById("commentText").value;
+
+    fetch('/strona-z-grami/backend/add_comment.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `game_id=${gameId}&comment=${encodeURIComponent(comment)}`
+    })
+    .then(res => res.text())
+    .then(data => {
+        alert(data);
+        location.reload();
+    });
+
+}

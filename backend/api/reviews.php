@@ -1,14 +1,16 @@
 <?php
 
-require_once("../config/db.php");
+require_once("../db.php");
 
 $game_id = $_GET['game_id'] ?? 0;
 
+
 $sql = "
-SELECT comment
+SELECT users.username, reviews.comment
 FROM reviews
-WHERE game_id = $game_id
-ORDER BY created_at DESC
+JOIN users ON reviews.user_id = users.id
+WHERE reviews.game_id = $game_id
+ORDER BY reviews.created_at DESC
 ";
 
 $result = $conn->query($sql);
@@ -21,4 +23,3 @@ while($row = $result->fetch_assoc()) {
 
 header('Content-Type: application/json');
 echo json_encode($reviews);
-?>

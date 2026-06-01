@@ -6,7 +6,7 @@
     <title>Document</title>
       <link rel="stylesheet" href="../../frontend/style.css">
 </head>
-<body>
+<body data-game-id="1">
     <header>
   <h1>PlayHub Games</h1>
   <nav>
@@ -18,7 +18,21 @@
     <div class="game-container">
         <iframe src="snake.game/snake.html" width="800" height="800"></iframe>
     </div>
+
+    <div class="comments-section">
+      <h2>Komentarze</h2>
+
+      <div id="comments"></div>
+    </div>
+
+    <div class="add-comment">
+      <textarea id="commentText" placeholder="Napisz komentarz..."></textarea>
+      <button onclick="addComment()">Dodaj komentarz</button>
+    </div>
+
     <script src="../../frontend/script.js"></script>
+    
+
     
 </body>
 </html>

@@ -4,9 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2048 — PlayHub Games</title>
+    <link rel="stylesheet" href="../../frontend/style.css">
 </head>
-<body>
+<body data-game-id="7">
     <h1>Gra działa</h1>
+
+    <div class="comments-section">
+      <h2>Komentarze</h2>
+
+      <div id="comments"></div>
+    </div>
+
+    <div class="add-comment">
+      <textarea id="commentText" placeholder="Napisz komentarz..."></textarea>
+      <button onclick="addComment()">Dodaj komentarz</button>
+    </div>
+
+    <script src="../../frontend/script.js"></script>
     
 </body>
 </html>
