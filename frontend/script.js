@@ -124,3 +124,15 @@ fetch('/strona-z-grami/backend/check_login.php')
       }
     }
   });
+
+
+document.getElementById("search").addEventListener("input", function() {
+    const value = this.value.toLowerCase();
+
+    document.querySelectorAll(".card").forEach(card => {
+        const title = card.querySelector("h3").textContent.toLowerCase();
+
+        card.style.display =
+            title.includes(value) ? "block" : "none";
+    });
+});
