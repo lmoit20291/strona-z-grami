@@ -30,3 +30,6 @@ Aby strona działała poprawnie na lokalnym serwerze (np. XAMPP, WAMP), należy 
 *Import bazy danych: - Wejdź do folderu /database.
 *Zaimportuj znajdujący się tam plik .sql do swojego lokalnego serwera MySQL (np. przez phpMyAdmin). (Uwaga!!!: Ten krok jest niezbędny – bez zaimportowania struktury i danych, system gier oraz logowanie nie będą działać)
 *Konfiguracja połączenia: Sprawdź pliki w folderze /backend i upewnij się, że dane dostępowe do bazy (host, login, hasło) zgadzają się z Twoją lokalną konfiguracją.
+
+## Jak uruchomić online
+Wystarczy wpisać ten link w przeglądarkę: https://strona-z-grami.7m.pl i nasza strona będzie działać (niektóre funkcje będą nie w pełni sprawne z powodu tymczasowego hostingu na 7m.pl który nie wspiera gier opartych o godot engine, co widać po wejściu m.in. w snake i pirate jump).
